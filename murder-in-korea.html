@@ -1,26 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Murder in Korea - Profile</title>
   <style>
+    /* Reset */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-
     body {
       height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      background: radial-gradient(circle at top left, #2a0f0f, #000);
+      background:
+        radial-gradient(circle at top left, #2a0f0f, #000),
+        radial-gradient(circle at bottom right, #3b1010, #000);
+      animation: bgFloat 12s ease-in-out infinite;
       font-family: 'Segoe UI', sans-serif;
       color: #fff;
       overflow: hidden;
+      position: relative;
     }
-
+    @keyframes bgFloat {
+      0%, 100% {
+        background-position: 0% 0%, 0% 0%;
+      }
+      50% {
+        background-position: 2% 2%, 3% 3%;
+      }
+    }
     .bg-effect {
       position: absolute;
       width: 100%;
@@ -33,6 +44,52 @@
         transparent 20px
       );
       pointer-events: none;
+      z-index: 0;
+      animation: movePattern 18s ease-in-out infinite;
+    }
+    @keyframes movePattern {
+      0% { transform: translate(0px, 0px); }
+      50% { transform: translate(12px, 12px); }
+      100% { transform: translate(0px, 0px); }
+    }
+
+    /* Glow particles container */
+    .glow-particles {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1;
+      overflow: visible;
+    }
+
+    /* Each particle */
+    .glow-particles .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: rgba(255, 0, 0, 0.15);
+      box-shadow: 0 0 6px rgba(255, 0, 0, 0.6);
+      will-change: transform;
+      pointer-events: none;
+    }
+
+    /* Subtle red pulse overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      pointer-events: none;
+      background: radial-gradient(circle at center, rgba(255, 0, 0, 0.1), transparent 70%);
+      animation: pulseRed 8s ease-in-out infinite;
+      z-index: 0;
+    }
+    @keyframes pulseRed {
+      0%, 100% { opacity: 0.1; }
+      50% { opacity: 0.25; }
     }
 
     .card {
@@ -44,8 +101,12 @@
       text-align: center;
       z-index: 2;
       backdrop-filter: blur(8px);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-
+    .card:hover {
+      transform: scale(1.035);
+      box-shadow: 0 0 80px rgba(255, 0, 0, 0.6);
+    }
     .card img {
       width: 150px;
       height: 150px;
@@ -53,35 +114,147 @@
       object-fit: cover;
       border: 4px solid #d32f2f;
       margin-bottom: 20px;
+      transition: none;
+      animation: none !important;
+      transform: none !important;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
     }
-
-    .username {
+    .username-container {
+      width: 13ch;
+      margin: 0 auto;
+      white-space: nowrap;
       font-size: 28px;
       font-weight: bold;
+      cursor: default;
+      overflow: hidden;
     }
-
+    .cursor {
+      display: inline-block;
+      margin-left: 2px;
+      color: #d32f2f;
+      animation: blinkCursor 0.75s step-end infinite;
+    }
+    @keyframes blinkCursor {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
     .tagline {
       font-size: 14px;
       color: #aaa;
       margin-top: 5px;
       margin-bottom: 25px;
     }
-
     .footer {
       font-size: 12px;
       color: #888;
       margin-top: 20px;
     }
+    .footer a {
+      color: #ff6ec7;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+    .footer a:hover {
+      color: #ff9fe3;
+      text-shadow: 0 0 5px #ff9fe3;
+    }
   </style>
 </head>
 <body>
   <div class="bg-effect"></div>
+  <div class="glow-particles"></div>
 
   <div class="card">
-    <img src="https://cdn.discordapp.com/avatars/1356445588203376830/db64cb9013aef7128114bd31b50e2953.png?size=1024" alt="Profile Picture">
-    <div class="username">murder in korea</div>
-    <div class="tagline">BLEHHHH :P<br>heylo̸̝̓l̸̘̾l̵͇͝l̵̻͒l̷̥̽l̶̙͗l̵̠͠l̷̬̀...</div>
-    <div class="footer">Member Since: 1 Apr 2025<br>Last Active: 26 Jun 2025</div>
+    <img src="https://cdn.discordapp.com/avatars/1356445588203376830/db64cb9013aef7128114bd31b50e2953.png?size=1024" alt="Profile Picture" />
+    <div class="username-container" aria-label="Username">
+      <span id="typed-text"></span><span class="cursor">|</span>
+    </div>
+    <div class="tagline">BLEHHHH :P<br>heylolllllllllllllllllllllllll</div>
+    <div class="footer">
+      Discord Member Since: 1 Apr 2025<br />
+      <a href="https://discord.gg/P9HBBa9Mqk" target="_blank" rel="noopener noreferrer">Join the Discord Server</a>
+    </div>
   </div>
+
+  <script>
+    // Typing effect
+    (() => {
+      const typedTextEl = document.getElementById('typed-text');
+      const text = "murder in korea";
+      const typingSpeed = 150;
+      const deletingSpeed = 100;
+      const pauseTime = 1500;
+
+      let index = 0;
+      let typing = true;
+
+      function type() {
+        if (typing) {
+          if (index < text.length) {
+            typedTextEl.textContent += text.charAt(index);
+            index++;
+            setTimeout(type, typingSpeed);
+          } else {
+            typing = false;
+            setTimeout(type, pauseTime);
+          }
+        } else {
+          if (index > 0) {
+            typedTextEl.textContent = typedTextEl.textContent.slice(0, -1);
+            index--;
+            setTimeout(type, deletingSpeed);
+          } else {
+            typing = true;
+            setTimeout(type, pauseTime);
+          }
+        }
+      }
+      type();
+    })();
+
+    // Glow particles animation
+    (() => {
+      const container = document.querySelector('.glow-particles');
+      const numParticles = 50;
+      const particles = [];
+
+      for (let i = 0; i < numParticles; i++) {
+        const p = document.createElement('div');
+        p.classList.add('particle');
+        p.style.left = Math.random() * window.innerWidth + 'px';
+        p.style.top = Math.random() * window.innerHeight + 'px';
+
+        particles.push({
+          el: p,
+          x: parseFloat(p.style.left),
+          y: parseFloat(p.style.top),
+          vx: (Math.random() - 0.5) * 0.15,
+          vy: (Math.random() - 0.5) * 0.15
+        });
+
+        container.appendChild(p);
+      }
+
+      function animate() {
+        for (const p of particles) {
+          p.x += p.vx;
+          p.y += p.vy;
+
+          // Wrap around edges
+          if (p.x < 0) p.x = window.innerWidth;
+          else if (p.x > window.innerWidth) p.x = 0;
+          if (p.y < 0) p.y = window.innerHeight;
+          else if (p.y > window.innerHeight) p.y = 0;
+
+          p.el.style.transform = `translate(${p.x}px, ${p.y}px)`;
+        }
+        requestAnimationFrame(animate);
+      }
+      animate();
+    })();
+  </script>
 </body>
 </html>
