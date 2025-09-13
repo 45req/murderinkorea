@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>My PC + Music Visualizer</title>
+<title>My PC</title>
 <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -37,7 +37,7 @@ h1 { text-align: center; color: #5c9dc9; margin-bottom: 1rem; font-size: 1.2rem;
 </head>
 <body>
 <div id="root"></div>
-<div id="startOverlay">Click to Start Music & Visualizer</div>
+<div id="startOverlay">Click Anywhere to Start Music</div>
 <script type="text/babel">
 
 const Icons = {
@@ -65,14 +65,11 @@ const Section = ({icon, title, specs}) => (
   </div>
 );
 
-const AudioVisualizer = ({audioSrc}) => {
+const AudioVisualizer = ({audio}) => {
   const containerRef = React.useRef(null);
-  const audioRef = React.useRef(null);
 
   React.useEffect(() => {
     const container = containerRef.current;
-    const audio = audioRef.current;
-
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
     const analyser = ctx.createAnalyser();
     const source = ctx.createMediaElementSource(audio);
@@ -98,27 +95,29 @@ const AudioVisualizer = ({audioSrc}) => {
       }
     }
     animate();
-  }, []);
+  }, [audio]);
 
-  return <><audio ref={audioRef} src={audioSrc} loop/></>;
-}
+  return <div className="visualizer-container" ref={containerRef}></div>;
+};
 
 const App = () => {
   const [started, setStarted] = React.useState(false);
+  const audioRef = React.useRef(new Audio("/music/music.mp3"));
 
-  const startAudio = () => {
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    audioCtx.resume();
-    setStarted(true);
-    document.getElementById("startOverlay").style.display = "none";
-    const audioEl = document.querySelector("audio");
-    audioEl.play();
-  }
+  const start = () => {
+    const audio = audioRef.current;
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    ctx.resume().then(() => {
+      audio.play();
+      setStarted(true);
+      document.getElementById("startOverlay").style.display = "none";
+    });
+  };
 
   return (
-    <div className="container" onClick={startAudio}>
+    <div className="container">
       <h1>💻 My PC</h1>
-      {started && <AudioVisualizer audioSrc="/music/music.mp3" />}
+      {started && <AudioVisualizer audio={audioRef.current} />}
       <Section icon={Icons.cpu} title="Processor (CPU)" specs={[
         ["Name", "AMD Ryzen 5 3600 (6-Core, 12 Threads)"],
         ["Frequency", "3.85 GHz"],
@@ -153,7 +152,15 @@ const App = () => {
   );
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+// Overlay click
+document.getElementById("startOverlay").onclick = () => {
+  document.getElementById("startOverlay").style.display = "none";
+  const audio = new Audio("/music/music.mp3");
+  audio.loop = true;
+  audio.play();
+  ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+};
+
 </script>
 </body>
 </html>
