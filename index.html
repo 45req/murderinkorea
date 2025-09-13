@@ -2,37 +2,20 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>My PC</title>
-<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+<title>PC</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; font-family: 'Montserrat', sans-serif; background: #171a21; color: #fff; display: flex; justify-content: center; align-items: center; }
-.container { width: 350px; max-width: 95%; }
-h1 { text-align: center; color: #5c9dc9; margin-bottom: 1rem; font-size: 1.2rem; }
-.section { background: rgba(27,40,56,0.9); border-radius: 8px; margin-bottom: 0.75rem; padding: 0.5rem 0.6rem; box-shadow: 0 0 8px rgba(92,157,201,0.3); display: flex; flex-direction: column; }
-.section:hover { transform: translateY(-2px); box-shadow: 0 0 12px rgba(92,157,201,0.5); }
-.section h2 { display: flex; align-items: center; font-size: 0.9rem; color: #5c9dc9; margin-bottom: 0.4rem; gap: 4px; }
-.icon-wrapper { width: 12px; height: 12px; flex-shrink: 0; display: flex; justify-content: center; align-items: center; }
-.icon-svg { width: 100%; height: 100%; object-fit: contain; fill: #5c9dc9; }
-.spec { display: flex; justify-content: space-between; padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.7rem; }
-.spec:last-child { border-bottom: none; }
-.label { color: #aaa; }
-.value { font-weight: 600; color: #fff; }
-
-/* Visualizer */
-.visualizer-container { width: 100%; height: 75px; background: rgba(27,40,56,0.7); border-radius: 8px; margin-bottom: 0.75rem; overflow: hidden; display: flex; align-items: flex-end; padding: 2px; }
-.bar { width: 2px; margin: 0 0.5px; background: #5c9dc9; height: 5px; transition: height 0.05s linear; border-radius: 1px; }
-
-#startOverlay {
-  position: fixed;
-  top:0; left:0; width:100%; height:100%;
-  background: rgba(0,0,0,0.85);
-  display:flex; justify-content:center; align-items:center;
-  color:#fff; font-size:1rem; cursor:pointer; z-index:1000;
-}
+body { margin:0; font-family:sans-serif; background:#171a21; color:#fff; display:flex; justify-content:center; align-items:center; height:100vh;}
+.container { width:350px; }
+h1 { text-align:center; color:#5c9dc9; font-size:1.2rem; margin-bottom:1rem;}
+.section { background:rgba(27,40,56,0.9); border-radius:8px; margin-bottom:0.75rem; padding:0.5rem 0.6rem;}
+.section h2 { color:#5c9dc9; font-size:0.9rem; margin-bottom:0.4rem;}
+.spec { display:flex; justify-content:space-between; font-size:0.7rem; margin-bottom:2px;}
+.visualizer { width:100%; height:75px; background:rgba(27,40,56,0.7); border-radius:8px; display:flex; align-items:flex-end; padding:2px; margin-bottom:1rem;}
+.bar { width:2px; margin:0 0.5px; background:#5c9dc9; border-radius:1px; transition:height 0.05s linear;}
+#startOverlay {position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;color:#fff;font-size:1rem;cursor:pointer;z-index:1000;}
 </style>
 </head>
 <body>
@@ -40,28 +23,10 @@ h1 { text-align: center; color: #5c9dc9; margin-bottom: 1rem; font-size: 1.2rem;
 <div id="startOverlay">Click Anywhere to Start Music</div>
 <script type="text/babel">
 
-const Icons = {
-  cpu: <svg className="icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 2v2H7v2H5v2H3v8h2v2h2v2h2v2h6v-2h2v-2h2v-2h2V6h-2V4h-2V2H9zM7 8h10v8H7V8z"/></svg>,
-  gpu: <svg className="icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 5h18v14H3V5zm2 2v10h14V7H5zm6 2h2v2h2v2h-2v2h-2v-2H9v-2h2V9z"/></svg>,
-  ram: <svg className="icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 7h16v10H4V7zm2 2v6h12V9H6zM2 12h2v2H2v-2zm18 0h2v2h-2v-2z"/></svg>,
-  disk: <svg className="icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 4h16v16H4V4zm2 2v12h12V6H6zm6 2a4 4 0 110 8 4 4 0 010-8zm0 2a2 2 0 100 4 2 2 0 000-4z"/></svg>,
-  monitor: <svg className="icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 4h18v12H3V4zm0 14h18v2H3v-2z"/></svg>,
-  os: <svg className="icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 4h8v8H3V4zm10 0h8v8h-8V4zM3 12h8v8H3v-8zm10 0h8v8h-8v-8z"/></svg>,
-  board: <svg className="icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 5h14v14H5V5zm2 2v10h10V7H7z"/></svg>
-};
-
-const Section = ({icon, title, specs}) => (
+const Section = ({title, specs}) => (
   <div className="section">
-    <h2>
-      <span className="icon-wrapper">{icon}</span>
-      {title}
-    </h2>
-    {specs.map(([label, value], i) => (
-      <div key={i} className="spec">
-        <span className="label">{label}</span>
-        <span className="value">{value}</span>
-      </div>
-    ))}
+    <h2>{title}</h2>
+    {specs.map(([k,v],i)=><div key={i} className="spec"><span>{k}</span><span>{v}</span></div>)}
   </div>
 );
 
@@ -69,7 +34,7 @@ const AudioVisualizer = ({audio}) => {
   const containerRef = React.useRef(null);
 
   React.useEffect(() => {
-    const container = containerRef.current;
+    if(!audio) return;
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
     const analyser = ctx.createAnalyser();
     const source = ctx.createMediaElementSource(audio);
@@ -79,85 +44,58 @@ const AudioVisualizer = ({audio}) => {
     const bufferLength = analyser.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
 
+    const container = containerRef.current;
+    container.innerHTML = "";
     const bars = [];
-    for (let i = 0; i < bufferLength; i++) {
+    for(let i=0;i<bufferLength;i++){
       const bar = document.createElement("div");
-      bar.className = "bar";
+      bar.className="bar";
       container.appendChild(bar);
       bars.push(bar);
     }
 
-    function animate() {
+    function animate(){
       requestAnimationFrame(animate);
       analyser.getByteFrequencyData(dataArray);
-      for (let i = 0; i < bufferLength; i++) {
-        bars[i].style.height = `${dataArray[i]/2}px`;
+      for(let i=0;i<bufferLength;i++){
+        bars[i].style.height = (dataArray[i]/2)+"px";
       }
     }
     animate();
+
+    // Resume context on click
+    ctx.resume();
+
   }, [audio]);
 
-  return <div className="visualizer-container" ref={containerRef}></div>;
+  return <div className="visualizer" ref={containerRef}></div>;
 };
 
 const App = () => {
-  const [started, setStarted] = React.useState(false);
-  const audioRef = React.useRef(new Audio("/music/music.mp3"));
+  const [started,setStarted] = React.useState(false);
+  const [audio,setAudio] = React.useState(null);
 
   const start = () => {
-    const audio = audioRef.current;
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    ctx.resume().then(() => {
-      audio.play();
-      setStarted(true);
-      document.getElementById("startOverlay").style.display = "none";
-    });
+    const a = new Audio("/music/music.mp3");
+    a.loop = true;
+    a.play();
+    setAudio(a);
+    setStarted(true);
+    document.getElementById("startOverlay").style.display="none";
   };
 
   return (
     <div className="container">
       <h1>💻 My PC</h1>
-      {started && <AudioVisualizer audio={audioRef.current} />}
-      <Section icon={Icons.cpu} title="Processor (CPU)" specs={[
-        ["Name", "AMD Ryzen 5 3600 (6-Core, 12 Threads)"],
-        ["Frequency", "3.85 GHz"],
-        ["Temperature", "84.5 °C"],
-        ["Voltage", "1.296 V"]
-      ]}/>
-      <Section icon={Icons.board} title="Motherboard" specs={[
-        ["Model", "ASRock B450M-HDV R4.0"],
-        ["BIOS", "P7.40 (10/20/2022)"]
-      ]}/>
-      <Section icon={Icons.ram} title="Memory (RAM)" specs={[
-        ["Total", "16 GB DDR4 (Dual Channel)"],
-        ["Frequency", "2133 MHz"],
-        ["Modules", "2 × 8192 MB (Wilk Elektronik)"]
-      ]}/>
-      <Section icon={Icons.gpu} title="Graphics Card (GPU)" specs={[
-        ["Model", "AMD Radeon RX 6600 (ASUS)"],
-        ["VRAM", "8 GB (1750 MHz)"]
-      ]}/>
-      <Section icon={Icons.disk} title="Storage" specs={[
-        ["Drive", "Kingston SA400S37240G SSD"],
-        ["Capacity", "240 GB (223.6 GiB usable)"]
-      ]}/>
-      <Section icon={Icons.monitor} title="Display" specs={[
-        ["Monitor", "ASUS VG249Q3A - 24\" 1080p"],
-        ["Refresh Rate", "48–180 Hz"]
-      ]}/>
-      <Section icon={Icons.os} title="System" specs={[
-        ["OS", "Windows 11 Pro (64-bit)"],
-      ]}/>
+      {started && audio && <AudioVisualizer audio={audio} />}
+      <Section title="CPU" specs={[["Name","AMD Ryzen 5 3600"],["Frequency","3.85 GHz"],["Temp","84°C"]]} />
+      <Section title="RAM" specs={[["16GB DDR4","Dual Channel"]]} />
+      <Section title="GPU" specs={[["AMD RX 6600","8GB VRAM"]]} />
     </div>
   );
-}
+};
 
-// Overlay click
-document.getElementById("startOverlay").onclick = () => {
-  document.getElementById("startOverlay").style.display = "none";
-  const audio = new Audio("/music/music.mp3");
-  audio.loop = true;
-  audio.play();
+document.getElementById("startOverlay").onclick = ()=>{
   ReactDOM.createRoot(document.getElementById("root")).render(<App />);
 };
 
