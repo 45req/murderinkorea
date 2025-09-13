@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>My PC Specs + Music Visualizer</title>
+<title>My PC + Music Visualizer</title>
 <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -10,26 +10,34 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; font-family: 'Montserrat', sans-serif; background: #171a21; color: #fff; display: flex; justify-content: center; align-items: center; }
-.container { width: 700px; max-width: 95%; }
-h1 { text-align: center; color: #5c9dc9; margin-bottom: 2rem; font-size: 2rem; }
-.section { background: rgba(27,40,56,0.9); border-radius: 12px; margin-bottom: 1.5rem; padding: 1rem 1.2rem; box-shadow: 0 0 15px rgba(92,157,201,0.3); transition: transform 0.2s ease, box-shadow 0.2s ease; display: flex; flex-direction: column; }
-.section:hover { transform: translateY(-4px); box-shadow: 0 0 20px rgba(92,157,201,0.5); }
-.section h2 { display: flex; align-items: center; font-size: 1.2rem; color: #5c9dc9; margin-bottom: 0.8rem; gap: 8px; }
-.icon-wrapper { width: 20px; height: 20px; flex-shrink: 0; display: flex; justify-content: center; align-items: center; }
+.container { width: 350px; max-width: 95%; }
+h1 { text-align: center; color: #5c9dc9; margin-bottom: 1rem; font-size: 1.2rem; }
+.section { background: rgba(27,40,56,0.9); border-radius: 8px; margin-bottom: 0.75rem; padding: 0.5rem 0.6rem; box-shadow: 0 0 8px rgba(92,157,201,0.3); display: flex; flex-direction: column; }
+.section:hover { transform: translateY(-2px); box-shadow: 0 0 12px rgba(92,157,201,0.5); }
+.section h2 { display: flex; align-items: center; font-size: 0.9rem; color: #5c9dc9; margin-bottom: 0.4rem; gap: 4px; }
+.icon-wrapper { width: 12px; height: 12px; flex-shrink: 0; display: flex; justify-content: center; align-items: center; }
 .icon-svg { width: 100%; height: 100%; object-fit: contain; fill: #5c9dc9; }
-.spec { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.95rem; }
+.spec { display: flex; justify-content: space-between; padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.7rem; }
 .spec:last-child { border-bottom: none; }
 .label { color: #aaa; }
 .value { font-weight: 600; color: #fff; }
 
-/* Visualizer Styles */
-.visualizer-container { width: 100%; height: 150px; background: rgba(27,40,56,0.7); border-radius: 12px; margin-bottom: 1.5rem; overflow: hidden; display: flex; align-items: flex-end; padding: 5px; }
-.bar { width: 4px; margin: 0 1px; background: #5c9dc9; height: 10px; transition: height 0.05s linear; border-radius: 2px; }
-audio { display: none; }
+/* Visualizer */
+.visualizer-container { width: 100%; height: 75px; background: rgba(27,40,56,0.7); border-radius: 8px; margin-bottom: 0.75rem; overflow: hidden; display: flex; align-items: flex-end; padding: 2px; }
+.bar { width: 2px; margin: 0 0.5px; background: #5c9dc9; height: 5px; transition: height 0.05s linear; border-radius: 1px; }
+
+#startOverlay {
+  position: fixed;
+  top:0; left:0; width:100%; height:100%;
+  background: rgba(0,0,0,0.85);
+  display:flex; justify-content:center; align-items:center;
+  color:#fff; font-size:1rem; cursor:pointer; z-index:1000;
+}
 </style>
 </head>
 <body>
 <div id="root"></div>
+<div id="startOverlay">Click to Start Music & Visualizer</div>
 <script type="text/babel">
 
 const Icons = {
@@ -59,11 +67,12 @@ const Section = ({icon, title, specs}) => (
 
 const AudioVisualizer = ({audioSrc}) => {
   const containerRef = React.useRef(null);
+  const audioRef = React.useRef(null);
 
   React.useEffect(() => {
-    const audio = new Audio(audioSrc);
-    audio.autoplay = true;
-    audio.loop = true;
+    const container = containerRef.current;
+    const audio = audioRef.current;
+
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
     const analyser = ctx.createAnalyser();
     const source = ctx.createMediaElementSource(audio);
@@ -73,8 +82,6 @@ const AudioVisualizer = ({audioSrc}) => {
     const bufferLength = analyser.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
 
-    // create bars
-    const container = containerRef.current;
     const bars = [];
     for (let i = 0; i < bufferLength; i++) {
       const bar = document.createElement("div");
@@ -91,79 +98,62 @@ const AudioVisualizer = ({audioSrc}) => {
       }
     }
     animate();
+  }, []);
 
-  }, [audioSrc]);
-
-  return <div className="visualizer-container" ref={containerRef}></div>;
+  return <><audio ref={audioRef} src={audioSrc} loop/></>;
 }
 
-const App = () => (
-  <div className="container">
-    <h1>💻 My PC</h1>
-    <AudioVisualizer audioSrc="music/music.mp4" />
-    <Section 
-      icon={Icons.cpu}
-      title="Processor (CPU)" 
-      specs={[
+const App = () => {
+  const [started, setStarted] = React.useState(false);
+
+  const startAudio = () => {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    audioCtx.resume();
+    setStarted(true);
+    document.getElementById("startOverlay").style.display = "none";
+    const audioEl = document.querySelector("audio");
+    audioEl.play();
+  }
+
+  return (
+    <div className="container" onClick={startAudio}>
+      <h1>💻 My PC</h1>
+      {started && <AudioVisualizer audioSrc="/music/music.mp3" />}
+      <Section icon={Icons.cpu} title="Processor (CPU)" specs={[
         ["Name", "AMD Ryzen 5 3600 (6-Core, 12 Threads)"],
         ["Frequency", "3.85 GHz"],
         ["Temperature", "84.5 °C"],
         ["Voltage", "1.296 V"]
-      ]}
-    />
-    <Section 
-      icon={Icons.board}
-      title="Motherboard" 
-      specs={[
+      ]}/>
+      <Section icon={Icons.board} title="Motherboard" specs={[
         ["Model", "ASRock B450M-HDV R4.0"],
         ["BIOS", "P7.40 (10/20/2022)"]
-      ]}
-    />
-    <Section 
-      icon={Icons.ram}
-      title="Memory (RAM)" 
-      specs={[
+      ]}/>
+      <Section icon={Icons.ram} title="Memory (RAM)" specs={[
         ["Total", "16 GB DDR4 (Dual Channel)"],
         ["Frequency", "2133 MHz"],
         ["Modules", "2 × 8192 MB (Wilk Elektronik)"]
-      ]}
-    />
-    <Section 
-      icon={Icons.gpu}
-      title="Graphics Card (GPU)" 
-      specs={[
+      ]}/>
+      <Section icon={Icons.gpu} title="Graphics Card (GPU)" specs={[
         ["Model", "AMD Radeon RX 6600 (ASUS)"],
         ["VRAM", "8 GB (1750 MHz)"]
-      ]}
-    />
-    <Section 
-      icon={Icons.disk}
-      title="Storage" 
-      specs={[
+      ]}/>
+      <Section icon={Icons.disk} title="Storage" specs={[
         ["Drive", "Kingston SA400S37240G SSD"],
         ["Capacity", "240 GB (223.6 GiB usable)"]
-      ]}
-    />
-    <Section 
-      icon={Icons.monitor}
-      title="Display" 
-      specs={[
+      ]}/>
+      <Section icon={Icons.monitor} title="Display" specs={[
         ["Monitor", "ASUS VG249Q3A - 24\" 1080p"],
         ["Refresh Rate", "48–180 Hz"]
-      ]}
-    />
-    <Section 
-      icon={Icons.os}
-      title="System" 
-      specs={[
+      ]}/>
+      <Section icon={Icons.os} title="System" specs={[
         ["OS", "Windows 11 Pro (64-bit)"],
-      ]}
-    />
-  </div>
-);
+      ]}/>
+    </div>
+  );
+}
 
 ReactDOM.createRoot(document.getElementById("root")).render(<App />);
-
 </script>
 </body>
 </html>
