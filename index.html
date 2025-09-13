@@ -6,8 +6,9 @@
 <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
 <style>
-body { margin:0; font-family:sans-serif; background:#171a21; color:#fff; display:flex; justify-content:center; align-items:center; height:100vh;}
+body { margin:0; font-family: 'Montserrat', sans-serif; background:#171a21; color:#fff; display:flex; justify-content:center; align-items:center; height:100vh;}
 .container { width:350px; }
 h1 { text-align:center; color:#5c9dc9; font-size:1.2rem; margin-bottom:1rem;}
 .section { background:rgba(27,40,56,0.9); border-radius:8px; margin-bottom:0.75rem; padding:0.5rem 0.6rem;}
@@ -21,6 +22,7 @@ h1 { text-align:center; color:#5c9dc9; font-size:1.2rem; margin-bottom:1rem;}
 <body>
 <div id="root"></div>
 <div id="startOverlay">Click Anywhere to Start Music</div>
+
 <script type="text/babel">
 
 const Section = ({title, specs}) => (
@@ -33,9 +35,9 @@ const Section = ({title, specs}) => (
 const AudioVisualizer = ({audio}) => {
   const containerRef = React.useRef(null);
 
-  React.useEffect(() => {
+  React.useEffect(()=>{
     if(!audio) return;
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
     const analyser = ctx.createAnalyser();
     const source = ctx.createMediaElementSource(audio);
     source.connect(analyser);
@@ -62,41 +64,32 @@ const AudioVisualizer = ({audio}) => {
       }
     }
     animate();
-
-    // Resume context on click
-    ctx.resume();
-
-  }, [audio]);
+  },[audio]);
 
   return <div className="visualizer" ref={containerRef}></div>;
 };
 
-const App = () => {
-  const [started,setStarted] = React.useState(false);
-  const [audio,setAudio] = React.useState(null);
+const App = ({audio}) => (
+  <div className="container">
+    <h1>💻 My PC</h1>
+    <AudioVisualizer audio={audio} />
+    <Section title="CPU" specs={[["Name","AMD Ryzen 5 3600"],["Frequency","3.85 GHz"],["Temp","84°C"],["Voltage","1.296V"]]} />
+    <Section title="RAM" specs={[["Total","16GB DDR4 (Dual Channel)"]]} />
+    <Section title="GPU" specs={[["Model","AMD RX 6600"],["VRAM","8GB"]]} />
+    <Section title="Storage" specs={[["Drive","Kingston SA400S37240G SSD"],["Capacity","240GB"]]} />
+    <Section title="Motherboard" specs={[["Model","ASRock B450M-HDV R4.0"],["BIOS","P7.40"]]} />
+    <Section title="Display" specs={[["Monitor","ASUS VG249Q3A 24\""],["Refresh Rate","48–180 Hz"]]} />
+    <Section title="OS" specs={[["Windows 11 Pro (64-bit)"]]} />
+  </div>
+);
 
-  const start = () => {
-    const a = new Audio("/music/music.mp3");
-    a.loop = true;
-    a.play();
-    setAudio(a);
-    setStarted(true);
-    document.getElementById("startOverlay").style.display="none";
-  };
-
-  return (
-    <div className="container">
-      <h1>💻 My PC</h1>
-      {started && audio && <AudioVisualizer audio={audio} />}
-      <Section title="CPU" specs={[["Name","AMD Ryzen 5 3600"],["Frequency","3.85 GHz"],["Temp","84°C"]]} />
-      <Section title="RAM" specs={[["16GB DDR4","Dual Channel"]]} />
-      <Section title="GPU" specs={[["AMD RX 6600","8GB VRAM"]]} />
-    </div>
-  );
-};
-
+// Start overlay click
 document.getElementById("startOverlay").onclick = ()=>{
-  ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  const audio = new Audio("/music/music.mp3");
+  audio.loop = true;
+  audio.play();
+  document.getElementById("startOverlay").style.display="none";
+  ReactDOM.createRoot(document.getElementById("root")).render(<App audio={audio} />);
 };
 
 </script>
