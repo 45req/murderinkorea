@@ -21,7 +21,6 @@ h1 { text-align:center; color:#5c9dc9; font-size:1.2rem; margin-bottom:1rem; }
 </head>
 <body>
 <div id="root"></div>
-<div id="startOverlay">Click Anywhere to Start Music</div>
 
 <script type="text/babel">
 
@@ -60,7 +59,7 @@ const AudioVisualizer = ({audio}) => {
       requestAnimationFrame(animate);
       analyser.getByteFrequencyData(dataArray);
       for(let i=0;i<bufferLength;i++){
-        bars[i].style.height = (dataArray[i]*1.5)+"px"; // bigger bars
+        bars[i].style.height = (dataArray[i]*1.5)+"px";
       }
     }
     animate();
@@ -69,28 +68,37 @@ const AudioVisualizer = ({audio}) => {
   return <div className="visualizer" ref={containerRef}></div>;
 };
 
-const App = ({audio}) => (
-  <div className="container">
-    <h1>💻 My PC</h1>
-    <Section title="CPU" specs={[["Name","AMD Ryzen 5 3600"],["Frequency","3.85 GHz"],["Temp","84°C"],["Voltage","1.296V"]]} />
-    <Section title="RAM" specs={[["Total","16GB DDR4 (Dual Channel)"]]} />
-    <Section title="GPU" specs={[["Model","AMD RX 6600"],["VRAM","8GB"]]} />
-    <Section title="Storage" specs={[["Drive","Kingston SA400S37240G SSD"],["Capacity","240GB"]]} />
-    <Section title="Motherboard" specs={[["Model","ASRock B450M-HDV R4.0"],["BIOS","P7.40"]]} />
-    <Section title="Display" specs={[["Monitor","ASUS VG249Q3A 24\""],["Refresh Rate","48–180 Hz"]]} />
-    <Section title="OS" specs={[["Windows 11 Pro (64-bit")]]} />
-    <AudioVisualizer audio={audio} />
-  </div>
-);
+const App = () => {
+  const [started, setStarted] = React.useState(false);
+  const [audio, setAudio] = React.useState(null);
 
-// Start overlay click
-document.getElementById("startOverlay").onclick = ()=>{
-  const audio = new Audio("/music/music.mp3");
-  audio.loop = true;
-  audio.play();
-  document.getElementById("startOverlay").style.display="none";
-  ReactDOM.createRoot(document.getElementById("root")).render(<App audio={audio} />);
+  const start = () => {
+    const a = new Audio("/music/music.mp3");
+    a.loop = true;
+    a.play();
+    setAudio(a);
+    setStarted(true);
+  };
+
+  return (
+    <>
+      {!started && <div id="startOverlay" onClick={start}>Click Anywhere to Start Music</div>}
+      <div className="container">
+        <h1>💻 My PC</h1>
+        <Section title="CPU" specs={[["Name","AMD Ryzen 5 3600"],["Frequency","3.85 GHz"],["Temp","84°C"],["Voltage","1.296V"]]} />
+        <Section title="RAM" specs={[["Total","16GB DDR4 (Dual Channel)"]]} />
+        <Section title="GPU" specs={[["Model","AMD RX 6600"],["VRAM","8GB"]]} />
+        <Section title="Storage" specs={[["Drive","Kingston SA400S37240G SSD"],["Capacity","240GB"]]} />
+        <Section title="Motherboard" specs={[["Model","ASRock B450M-HDV R4.0"],["BIOS","P7.40"]]} />
+        <Section title="Display" specs={[["Monitor","ASUS VG249Q3A 24\""],["Refresh Rate","48–180 Hz"]]} />
+        <Section title="OS" specs={[["Windows 11 Pro (64-bit)"]]} />
+      </div>
+      {started && audio && <AudioVisualizer audio={audio} />}
+    </>
+  );
 };
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
 
 </script>
 </body>
