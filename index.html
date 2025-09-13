@@ -1,285 +1,169 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
-  <!-- Basic Open Graph meta tags -->
-  <meta property="og:title" content="" />
-  <meta property="og:description" content="" />
-  <meta property="og:image" content="https://cdn.discordapp.com/attachments/1381246727960395887/1388644040316293250/image.png?ex=6861bb0a&is=6860698a&hm=29846ccaffac3bbdde14dc86d84d6d1048295352c4a6ac7125790c3d6a5a025d&" />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://cdn.discordapp.com/attachments/1381246727960395887/1388644040316293250/image.png?ex=6861bb0a&is=6860698a&hm=29846ccaffac3bbdde14dc86d84d6d1048295352c4a6ac7125790c3d6a5a025d&" />
+<meta charset="UTF-8">
+<title>My PC Specs + Music Visualizer</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; font-family: 'Montserrat', sans-serif; background: #171a21; color: #fff; display: flex; justify-content: center; align-items: center; }
+.container { width: 700px; max-width: 95%; }
+h1 { text-align: center; color: #5c9dc9; margin-bottom: 2rem; font-size: 2rem; }
+.section { background: rgba(27,40,56,0.9); border-radius: 12px; margin-bottom: 1.5rem; padding: 1rem 1.2rem; box-shadow: 0 0 15px rgba(92,157,201,0.3); transition: transform 0.2s ease, box-shadow 0.2s ease; display: flex; flex-direction: column; }
+.section:hover { transform: translateY(-4px); box-shadow: 0 0 20px rgba(92,157,201,0.5); }
+.section h2 { display: flex; align-items: center; font-size: 1.2rem; color: #5c9dc9; margin-bottom: 0.8rem; gap: 8px; }
+.icon-wrapper { width: 20px; height: 20px; flex-shrink: 0; display: flex; justify-content: center; align-items: center; }
+.icon-svg { width: 100%; height: 100%; object-fit: contain; fill: #5c9dc9; }
+.spec { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.95rem; }
+.spec:last-child { border-bottom: none; }
+.label { color: #aaa; }
+.value { font-weight: 600; color: #fff; }
 
-  <!-- Twitter card tags (optional but recommended) -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="murder in korea" />
-  <meta name="twitter:description" content="fuhh is going on" />
-  <meta name="twitter:image" content="https://cdn.discordapp.com/attachments/1381246727960395887/1388644040316293250/image.png?ex=6861bb0a&is=6860698a&hm=29846ccaffac3bbdde14dc86d84d6d1048295352c4a6ac7125790c3d6a5a025d&" />
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>\murderinkorea</title>
-  <style>
-    html, body {
-      height: 100%;
-      margin: 0; padding: 0;
-      overflow-y: auto;
-      font-family: 'Courier New', monospace;
-      background: linear-gradient(135deg, #00BFFF 0%, #EF3340 50%, #009639 100%);
-      color: white;
-      position: relative;
-    }
-  <meta charset="UTF-8" />
-  <title>Murder in Korea - Profile</title>
-  <style>
-    /* Reset */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background:
-        radial-gradient(circle at top left, #2a0f0f, #000),
-        radial-gradient(circle at bottom right, #3b1010, #000);
-      animation: bgFloat 12s ease-in-out infinite;
-      font-family: 'Segoe UI', sans-serif;
-      color: #fff;
-      overflow: hidden;
-      position: relative;
-    }
-    @keyframes bgFloat {
-      0%, 100% {
-        background-position: 0% 0%, 0% 0%;
-      }
-      50% {
-        background-position: 2% 2%, 3% 3%;
-      }
-    }
-    .bg-effect {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: repeating-radial-gradient(
-        circle,
-        rgba(255, 0, 0, 0.05),
-        rgba(255, 0, 0, 0.05) 2px,
-        transparent 2px,
-        transparent 20px
-      );
-      pointer-events: none;
-      z-index: 0;
-      animation: movePattern 18s ease-in-out infinite;
-    }
-    @keyframes movePattern {
-      0% { transform: translate(0px, 0px); }
-      50% { transform: translate(12px, 12px); }
-      100% { transform: translate(0px, 0px); }
-    }
-
-    /* Glow particles container */
-    .glow-particles {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-      z-index: 1;
-      overflow: visible;
-    }
-
-    /* Each particle */
-    .glow-particles .particle {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      background: rgba(255, 0, 0, 0.15);
-      box-shadow: 0 0 6px rgba(255, 0, 0, 0.6);
-      will-change: transform;
-      pointer-events: none;
-    }
-
-    /* Subtle red pulse overlay */
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      pointer-events: none;
-      background: radial-gradient(circle at center, rgba(255, 0, 0, 0.1), transparent 70%);
-      animation: pulseRed 8s ease-in-out infinite;
-      z-index: 0;
-    }
-    @keyframes pulseRed {
-      0%, 100% { opacity: 0.1; }
-      50% { opacity: 0.25; }
-    }
-
-    .card {
-      position: relative;
-      background: rgba(30, 14, 14, 0.85);
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 0 50px rgba(255, 0, 0, 0.4);
-      text-align: center;
-      z-index: 2;
-      backdrop-filter: blur(8px);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .card:hover {
-      transform: scale(1.035);
-      box-shadow: 0 0 80px rgba(255, 0, 0, 0.6);
-    }
-    .card img {
-      width: 150px;
-      height: 150px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 4px solid #d32f2f;
-      margin-bottom: 20px;
-      transition: none;
-      animation: none !important;
-      transform: none !important;
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .username-container {
-      width: 13ch;
-      margin: 0 auto;
-      white-space: nowrap;
-      font-size: 28px;
-      font-weight: bold;
-      cursor: default;
-      overflow: hidden;
-    }
-    .cursor {
-      display: inline-block;
-      margin-left: 2px;
-      color: #d32f2f;
-      animation: blinkCursor 0.75s step-end infinite;
-    }
-    @keyframes blinkCursor {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0; }
-    }
-    .tagline {
-      font-size: 14px;
-      color: #aaa;
-      margin-top: 5px;
-      margin-bottom: 25px;
-    }
-    .footer {
-      font-size: 12px;
-      color: #888;
-      margin-top: 20px;
-    }
-    .footer a {
-      color: #ff6ec7;
-      text-decoration: none;
-      font-weight: bold;
-      transition: color 0.3s ease;
-    }
-    .footer a:hover {
-      color: #ff9fe3;
-      text-shadow: 0 0 5px #ff9fe3;
-    }
-  </style>
+/* Visualizer Styles */
+.visualizer-container { width: 100%; height: 150px; background: rgba(27,40,56,0.7); border-radius: 12px; margin-bottom: 1.5rem; overflow: hidden; display: flex; align-items: flex-end; padding: 5px; }
+.bar { width: 4px; margin: 0 1px; background: #5c9dc9; height: 10px; transition: height 0.05s linear; border-radius: 2px; }
+audio { display: none; }
+</style>
 </head>
 <body>
-  <div class="bg-effect"></div>
-  <div class="glow-particles"></div>
+<div id="root"></div>
+<script type="text/babel">
 
-  <div class="card">
-    <img src="https://cdn.discordapp.com/avatars/1356445588203376830/db64cb9013aef7128114bd31b50e2953.png?size=1024" alt="Profile Picture" />
-    <div class="username-container" aria-label="Username">
-      <span id="typed-text"></span><span class="cursor">|</span>
-    </div>
-    <div class="tagline">heylolllllllllllllllllllllllll<br></div>
-    <div class="footer">
-      Discord Member Since: 1 Apr 2025<br />
-      <a href="https://discord.gg/P9HBBa9Mqk" target="_blank" rel="noopener noreferrer">Join the Discord Server</a>
-    </div>
+const Icons = {
+  cpu: <svg className="icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 2v2H7v2H5v2H3v8h2v2h2v2h2v2h6v-2h2v-2h2v-2h2V6h-2V4h-2V2H9zM7 8h10v8H7V8z"/></svg>,
+  gpu: <svg className="icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 5h18v14H3V5zm2 2v10h14V7H5zm6 2h2v2h2v2h-2v2h-2v-2H9v-2h2V9z"/></svg>,
+  ram: <svg className="icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 7h16v10H4V7zm2 2v6h12V9H6zM2 12h2v2H2v-2zm18 0h2v2h-2v-2z"/></svg>,
+  disk: <svg className="icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 4h16v16H4V4zm2 2v12h12V6H6zm6 2a4 4 0 110 8 4 4 0 010-8zm0 2a2 2 0 100 4 2 2 0 000-4z"/></svg>,
+  monitor: <svg className="icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 4h18v12H3V4zm0 14h18v2H3v-2z"/></svg>,
+  os: <svg className="icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 4h8v8H3V4zm10 0h8v8h-8V4zM3 12h8v8H3v-8zm10 0h8v8h-8v-8z"/></svg>,
+  board: <svg className="icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 5h14v14H5V5zm2 2v10h10V7H7z"/></svg>
+};
+
+const Section = ({icon, title, specs}) => (
+  <div className="section">
+    <h2>
+      <span className="icon-wrapper">{icon}</span>
+      {title}
+    </h2>
+    {specs.map(([label, value], i) => (
+      <div key={i} className="spec">
+        <span className="label">{label}</span>
+        <span className="value">{value}</span>
+      </div>
+    ))}
   </div>
+);
 
-  <script>
-    // Typing effect
-    (() => {
-      const typedTextEl = document.getElementById('typed-text');
-      const text = "murder in korea";
-      const typingSpeed = 150;
-      const deletingSpeed = 100;
-      const pauseTime = 1500;
+const AudioVisualizer = ({audioSrc}) => {
+  const containerRef = React.useRef(null);
 
-      let index = 0;
-      let typing = true;
+  React.useEffect(() => {
+    const audio = new Audio(audioSrc);
+    audio.autoplay = true;
+    audio.loop = true;
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const analyser = ctx.createAnalyser();
+    const source = ctx.createMediaElementSource(audio);
+    source.connect(analyser);
+    analyser.connect(ctx.destination);
+    analyser.fftSize = 64;
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
 
-      function type() {
-        if (typing) {
-          if (index < text.length) {
-            typedTextEl.textContent += text.charAt(index);
-            index++;
-            setTimeout(type, typingSpeed);
-          } else {
-            typing = false;
-            setTimeout(type, pauseTime);
-          }
-        } else {
-          if (index > 0) {
-            typedTextEl.textContent = typedTextEl.textContent.slice(0, -1);
-            index--;
-            setTimeout(type, deletingSpeed);
-          } else {
-            typing = true;
-            setTimeout(type, pauseTime);
-          }
-        }
+    // create bars
+    const container = containerRef.current;
+    const bars = [];
+    for (let i = 0; i < bufferLength; i++) {
+      const bar = document.createElement("div");
+      bar.className = "bar";
+      container.appendChild(bar);
+      bars.push(bar);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      analyser.getByteFrequencyData(dataArray);
+      for (let i = 0; i < bufferLength; i++) {
+        bars[i].style.height = `${dataArray[i]/2}px`;
       }
-      type();
-    })();
+    }
+    animate();
 
-    // Glow particles animation
-    (() => {
-      const container = document.querySelector('.glow-particles');
-      const numParticles = 50;
-      const particles = [];
+  }, [audioSrc]);
 
-      for (let i = 0; i < numParticles; i++) {
-        const p = document.createElement('div');
-        p.classList.add('particle');
-        p.style.left = Math.random() * window.innerWidth + 'px';
-        p.style.top = Math.random() * window.innerHeight + 'px';
+  return <div className="visualizer-container" ref={containerRef}></div>;
+}
 
-        particles.push({
-          el: p,
-          x: parseFloat(p.style.left),
-          y: parseFloat(p.style.top),
-          vx: (Math.random() - 0.5) * 0.15,
-          vy: (Math.random() - 0.5) * 0.15
-        });
+const App = () => (
+  <div className="container">
+    <h1>💻 My PC</h1>
+    <AudioVisualizer audioSrc="music/music.mp4" />
+    <Section 
+      icon={Icons.cpu}
+      title="Processor (CPU)" 
+      specs={[
+        ["Name", "AMD Ryzen 5 3600 (6-Core, 12 Threads)"],
+        ["Frequency", "3.85 GHz"],
+        ["Temperature", "84.5 °C"],
+        ["Voltage", "1.296 V"]
+      ]}
+    />
+    <Section 
+      icon={Icons.board}
+      title="Motherboard" 
+      specs={[
+        ["Model", "ASRock B450M-HDV R4.0"],
+        ["BIOS", "P7.40 (10/20/2022)"]
+      ]}
+    />
+    <Section 
+      icon={Icons.ram}
+      title="Memory (RAM)" 
+      specs={[
+        ["Total", "16 GB DDR4 (Dual Channel)"],
+        ["Frequency", "2133 MHz"],
+        ["Modules", "2 × 8192 MB (Wilk Elektronik)"]
+      ]}
+    />
+    <Section 
+      icon={Icons.gpu}
+      title="Graphics Card (GPU)" 
+      specs={[
+        ["Model", "AMD Radeon RX 6600 (ASUS)"],
+        ["VRAM", "8 GB (1750 MHz)"]
+      ]}
+    />
+    <Section 
+      icon={Icons.disk}
+      title="Storage" 
+      specs={[
+        ["Drive", "Kingston SA400S37240G SSD"],
+        ["Capacity", "240 GB (223.6 GiB usable)"]
+      ]}
+    />
+    <Section 
+      icon={Icons.monitor}
+      title="Display" 
+      specs={[
+        ["Monitor", "ASUS VG249Q3A - 24\" 1080p"],
+        ["Refresh Rate", "48–180 Hz"]
+      ]}
+    />
+    <Section 
+      icon={Icons.os}
+      title="System" 
+      specs={[
+        ["OS", "Windows 11 Pro (64-bit)"],
+      ]}
+    />
+  </div>
+);
 
-        container.appendChild(p);
-      }
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
 
-      function animate() {
-        for (const p of particles) {
-          p.x += p.vx;
-          p.y += p.vy;
-
-          // Wrap around edges
-          if (p.x < 0) p.x = window.innerWidth;
-          else if (p.x > window.innerWidth) p.x = 0;
-          if (p.y < 0) p.y = window.innerHeight;
-          else if (p.y > window.innerHeight) p.y = 0;
-
-          p.el.style.transform = `translate(${p.x}px, ${p.y}px)`;
-        }
-        requestAnimationFrame(animate);
-      }
-      animate();
-    })();
-  </script>
+</script>
 </body>
 </html>
