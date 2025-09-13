@@ -8,15 +8,66 @@
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
 <style>
-body { margin:0; font-family:'Montserrat', sans-serif; background:#171a21; color:#fff; height:100vh; overflow:hidden; display:flex; justify-content:center; align-items:center; }
-.container { width:350px; z-index:2; position:relative; }
-h1 { text-align:center; color:#5c9dc9; font-size:1.2rem; margin-bottom:1rem; }
-.section { background:rgba(27,40,56,0.9); border-radius:8px; margin-bottom:0.75rem; padding:0.5rem 0.6rem; position:relative; z-index:2; }
-.section h2 { color:#5c9dc9; font-size:0.9rem; margin-bottom:0.4rem; }
+body {
+  margin:0;
+  font-family:'Montserrat', sans-serif;
+  height:100vh;
+  overflow:hidden;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background: linear-gradient(135deg, #1a1a1a, #0f1c2f, #2c1a36);
+}
+
+.container {
+  width:350px;
+  z-index:2;
+  position:relative;
+}
+
+h1 {
+  text-align:center;
+  color:#fff;
+  font-size:1.2rem;
+  margin-bottom:1rem;
+}
+
+.section {
+  background: rgba(0,0,0,0.5);
+  border-radius:8px;
+  margin-bottom:0.75rem;
+  padding:0.5rem 0.6rem;
+  position:relative;
+  z-index:2;
+}
+
+.section h2 { color:#fff; font-size:0.9rem; margin-bottom:0.4rem; }
 .spec { display:flex; justify-content:space-between; font-size:0.7rem; margin-bottom:2px; }
-#startOverlay {position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;color:#fff;font-size:1rem;cursor:pointer;z-index:10;}
-.visualizer { position:fixed; bottom:0; left:0; width:100%; height:150px; background:rgba(27,40,56,0.5); display:flex; align-items:flex-end; padding:0 2px; z-index:1; }
-.bar { flex:1; margin:0 1px; background:#5c9dc9; transition:height 0.05s linear; border-radius:1px; }
+#startOverlay {
+  position:fixed; top:0; left:0; width:100%; height:100%;
+  background:rgba(0,0,0,0.85);
+  display:flex; justify-content:center; align-items:center;
+  color:#fff; font-size:1rem; cursor:pointer; z-index:10;
+}
+
+.visualizer {
+  position:fixed;
+  bottom:0; left:0;
+  width:100%;
+  height:150px;
+  display:flex;
+  align-items:flex-end;
+  padding:0 2px;
+  z-index:1;
+}
+
+.bar {
+  flex:1;
+  margin:0 1px;
+  border-radius:1px;
+  transition:height 0.05s linear;
+  background: linear-gradient(to top, #ff4d4d, #ffb84d, #4dffb8);
+}
 </style>
 </head>
 <body>
@@ -59,7 +110,7 @@ const AudioVisualizer = ({audio}) => {
       requestAnimationFrame(animate);
       analyser.getByteFrequencyData(dataArray);
       for(let i=0;i<bufferLength;i++){
-        bars[i].style.height = (dataArray[i]*1.5)+"px";
+        bars[i].style.height = (dataArray[i]*2)+"px";
       }
     }
     animate();
