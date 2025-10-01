@@ -1,147 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>PC</title>
-<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-<style>
-body {
-  margin:0;
-  font-family:'Montserrat', sans-serif;
-  height:100vh;
-  overflow:hidden;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background: linear-gradient(135deg, #1a1a1a, #0f1c2f, #2c1a36);
-}
+  <meta charset="UTF-8">
+  <title>Music Player</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #1a1a1a, #0f1c2f, #2c1a36);
+    }
 
-.container {
-  width:350px;
-  z-index:2;
-  position:relative;
-}
+    .container {
+      width: 350px;
+      z-index: 2;
+      position: relative;
+      text-align: center;
+      color: white;
+    }
 
-h1 {
-  text-align:center;
-  color:#fff;
-  font-size:1.2rem;
-  margin-bottom:1rem;
-}
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
 
-.section {
-  background: rgba(255,255,255,0.5);
-  border-radius:15px;
-  margin-bottom:0.75rem;
-  padding:0.5rem 0.6rem;
-  position:relative;
-  z-index:2;
-}
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
 
-.section h2 { color:#fff; font-size:0.9rem; margin-bottom:0.4rem; }
-.spec { display:flex; justify-content:space-between; font-size:0.7rem; margin-bottom:2px; }
-#startOverlay {
-  position:fixed; top:0; left:0; width:100%; height:100%;
-  background:rgba(0,0,0,0.85);
-  display:flex; justify-content:center; align-items:center;
-  color:#fff; font-size:1rem; cursor:pointer; z-index:10;
-}
+    .button {
+      background: #ffffff20;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      color: white;
+      font-size: 0.9rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
 
-.visualizer {
-  position:fixed;
-  bottom:0; left:0;
-  width:100%;
-  height:150px;
-  display:flex;
-  align-items:flex-end;
-  padding:0 2px;
-  z-index:1;
-}
+    .button:hover {
+      background: #ffffff40;
+    }
 
-.bar {
-  flex:1;
-  margin:0 1px;
-  border-radius:1px;
-  transition:height 0.05s linear;
-  background: linear-gradient(to top, #ff4d4d, #ffb84d, #4dffb8);
-}
-</style>
+    #startOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      font-size: 1.2rem;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .visualizer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 150px;
+      display: flex;
+      align-items: flex-end;
+      padding: 0 2px;
+      z-index: 1;
+    }
+
+    .bar {
+      flex: 1;
+      margin: 0 1px;
+      border-radius: 1px;
+      transition: height 0.05s linear;
+      background: linear-gradient(to top, #ff4d4d, #ffb84d, #4dffb8);
+    }
+  </style>
 </head>
 <body>
 <div id="root"></div>
 
 <script type="text/babel">
 
-const Section = ({title, specs}) => (
-  <div className="section">
-    <h2>{title}</h2>
-    {specs.map(([k,v],i)=><div key={i} className="spec"><span>{k}</span><span>{v}</span></div>)}
-  </div>
-);
-
-const AudioVisualizer = ({audio}) => {
+const AudioVisualizer = ({ audio }) => {
   const containerRef = React.useRef(null);
 
-  React.useEffect(()=>{
-    if(!audio) return;
-    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+  React.useEffect(() => {
+    if (!audio) return;
+
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
     const analyser = ctx.createAnalyser();
     const source = ctx.createMediaElementSource(audio);
     source.connect(analyser);
     analyser.connect(ctx.destination);
     analyser.fftSize = 128;
+
     const bufferLength = analyser.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
 
     const container = containerRef.current;
     container.innerHTML = "";
+
     const bars = [];
-    for(let i=0;i<bufferLength;i++){
+    for (let i = 0; i < bufferLength; i++) {
       const bar = document.createElement("div");
-      bar.className="bar";
+      bar.className = "bar";
       container.appendChild(bar);
       bars.push(bar);
     }
 
-    function animate(){
+    function animate() {
       requestAnimationFrame(animate);
       analyser.getByteFrequencyData(dataArray);
-      for(let i=0;i<bufferLength;i++){
-        bars[i].style.height = (dataArray[i]*2)+"px";
+      for (let i = 0; i < bufferLength; i++) {
+        bars[i].style.height = (dataArray[i] * 2) + "px";
       }
     }
+
     animate();
-  },[audio]);
+
+    return () => {
+      ctx.close();
+    };
+  }, [audio]);
 
   return <div className="visualizer" ref={containerRef}></div>;
 };
 
 const App = () => {
   const [started, setStarted] = React.useState(false);
+  const [isPlaying, setIsPlaying] = React.useState(false);
   const [audio, setAudio] = React.useState(null);
 
   const start = () => {
     const a = new Audio("/music/music.mp3");
     a.loop = true;
+    a.volume = 0.8;
     a.play();
     setAudio(a);
+    setIsPlaying(true);
     setStarted(true);
+  };
+
+  const togglePlay = () => {
+    if (!audio) return;
+    if (isPlaying) {
+      audio.pause();
+    } else {
+      audio.play();
+    }
+    setIsPlaying(!isPlaying);
   };
 
   return (
     <>
-      {!started && <div id="startOverlay" onClick={start}>Click Anywhere to Enter</div>}
-      <div className="container">
+      {!started && <div id="startOverlay" onClick={start}>Click Anywhere to Start Music Player</div>}
+
+      {started && (
+        <div className="container">
+          <h1>Now Playing</h1>
+          <div>🎵 music.mp3</div>
+          <div className="controls">
+            <button className="button" onClick={togglePlay}>
+              {isPlaying ? "Pause" : "Play"}
+            </button>
+          </div>
+        </div>
+      )}
+
       {started && audio && <AudioVisualizer audio={audio} />}
     </>
   );
 };
 
 ReactDOM.createRoot(document.getElementById("root")).render(<App />);
-
 </script>
 </body>
 </html>
