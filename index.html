@@ -1,213 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Music from my playlist</title>
-  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <title>My Playlist</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
   <style>
-    body {
+    * {
+      box-sizing: border-box;
       margin: 0;
-      font-family: 'Montserrat', sans-serif;
+      padding: 0;
+    }
+
+    body {
       height: 100vh;
-      overflow: hidden;
+      width: 100vw;
+      font-family: 'Montserrat', sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
-      background: linear-gradient(135deg, #1a1a1a, #0f1c2f, #2c1a36);
+      background: linear-gradient(135deg, #1e1e2f, #2b2d42, #3a1c71);
+      background-size: 600% 600%;
+      animation: gradientBG 15s ease infinite;
+      color: white;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     .container {
-      width: 360px;
-      z-index: 2;
-      position: relative;
+      max-width: 420px;
+      width: 90%;
       text-align: center;
-      color: white;
+      padding: 2rem;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(10px);
     }
 
     h1 {
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       margin-bottom: 1rem;
-    }
-
-    .controls {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-
-    .button {
-      background: #ffffff20;
-      border: none;
-      padding: 0.6rem 1.2rem;
-      color: white;
-      font-size: 0.9rem;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-
-    .button:hover {
-      background: #ffffff40;
-    }
-
-    #startOverlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.85);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: #fff;
-      font-size: 1.2rem;
-      cursor: pointer;
-      z-index: 10;
-    }
-
-    .visualizer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 150px;
-      display: flex;
-      align-items: flex-end;
-      padding: 0 2px;
-      z-index: 1;
-    }
-
-    .bar {
-      flex: 1;
-      margin: 0 1px;
-      border-radius: 2px;
-      background: #00ffff; /* Cyan */
-      transition: height 0.1s ease-out;
+      font-weight: 700;
+      letter-spacing: 1px;
     }
 
     iframe {
-      margin-top: 1.5rem;
+      width: 100%;
+      height: 380px;
       border-radius: 12px;
+      border: none;
+    }
+
+    @media (max-width: 500px) {
+      iframe {
+        height: 300px;
+      }
     }
   </style>
 </head>
 <body>
-<div id="root"></div>
-
-<script type="text/babel">
-
-const AudioVisualizer = ({ audio }) => {
-  const containerRef = React.useRef(null);
-
-  React.useEffect(() => {
-    if (!audio) return;
-
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const analyser = ctx.createAnalyser();
-    const source = ctx.createMediaElementSource(audio);
-    source.connect(analyser);
-    analyser.connect(ctx.destination);
-    analyser.fftSize = 256;
-
-    const bufferLength = analyser.frequencyBinCount;
-    const dataArray = new Uint8Array(bufferLength);
-
-    const container = containerRef.current;
-    container.innerHTML = "";
-
-    const bars = [];
-    for (let i = 0; i < bufferLength; i++) {
-      const bar = document.createElement("div");
-      bar.className = "bar";
-      container.appendChild(bar);
-      bars.push(bar);
-    }
-
-    let animationId;
-
-    function animate() {
-      animationId = requestAnimationFrame(animate);
-      analyser.getByteFrequencyData(dataArray);
-      bars.forEach((bar, i) => {
-        const value = dataArray[i];
-        const height = (value / 255) * 100; // smoother scaling
-        bar.style.height = `${height}%`;
-      });
-    }
-
-    animate();
-
-    return () => {
-      cancelAnimationFrame(animationId);
-      ctx.close();
-    };
-  }, [audio]);
-
-  return <div className="visualizer" ref={containerRef}></div>;
-};
-
-const App = () => {
-  const [started, setStarted] = React.useState(false);
-  const [isPlaying, setIsPlaying] = React.useState(false);
-  const [audio, setAudio] = React.useState(null);
-
-  const start = () => {
-    const a = new Audio("/music/music.mp3"); // Your local file
-    a.loop = true;
-    a.volume = 0.8;
-    a.play();
-    setAudio(a);
-    setIsPlaying(true);
-    setStarted(true);
-  };
-
-  const togglePlay = () => {
-    if (!audio) return;
-    if (isPlaying) {
-      audio.pause();
-    } else {
-      audio.play();
-    }
-    setIsPlaying(!isPlaying);
-  };
-
-  return (
-    <>
-      {!started && <div id="startOverlay" onClick={start}>Click Anywhere to Start Music Player</div>}
-
-      {started && (
-        <div className="container">
-          <h1>Now Playing</h1>
-          <div>🎵 music.mp3</div>
-          <div className="controls">
-            <button className="button" onClick={togglePlay}>
-              {isPlaying ? "Pause" : "Play"}
-            </button>
-          </div>
-
-          {/* Spotify Playlist Embed */}
-          <iframe
-            src="https://open.spotify.com/embed/playlist/34FCT6n4pi2VrfmpoS6SgF?utm_source=generator&theme=0"
-            width="100%"
-            height="380"
-            frameBorder="0"
-            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-            loading="lazy"
-          ></iframe>
-        </div>
-      )}
-
-      {started && audio && <AudioVisualizer audio={audio} />}
-    </>
-  );
-};
-
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
-</script>
+  <div class="container">
+    <h1>My Playlist:</h1>
+    <iframe 
+      src="https://open.spotify.com/embed/playlist/34FCT6n4pi2VrfmpoS6SgF?utm_source=generator&theme=0" 
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+      loading="lazy">
+    </iframe>
+  </div>
 </body>
 </html>
