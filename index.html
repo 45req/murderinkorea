@@ -135,15 +135,6 @@ const App = () => {
     <>
       {!started && <div id="startOverlay" onClick={start}>Click Anywhere to Enter</div>}
       <div className="container">
-        <h1>💻 My PC</h1>
-        <Section title="CPU" specs={[["Name","AMD Ryzen 5 3600"],["Frequency","3.85 GHz"],["Temp","84°C"],["Voltage","1.296V"]]} />
-        <Section title="RAM" specs={[["Total","16GB DDR4 (Dual Channel)"]]} />
-        <Section title="GPU" specs={[["Model","AMD RX 6600"],["VRAM","8GB"]]} />
-        <Section title="Storage" specs={[["Drive","Kingston SA400S37240G SSD"],["Capacity","240GB"]]} />
-        <Section title="Motherboard" specs={[["Model","ASRock B450M-HDV R4.0"],["BIOS","P7.40"]]} />
-        <Section title="Display" specs={[["Monitor","ASUS VG249Q3A 24\""],["Refresh Rate","48–180 Hz"]]} />
-        <Section title="OS" specs={[["Windows 11 Pro (64-bit)"]]} />
-      </div>
       {started && audio && <AudioVisualizer audio={audio} />}
     </>
   );
