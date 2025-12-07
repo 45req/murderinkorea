@@ -20,22 +20,22 @@
       overflow: hidden;
     }
 
-    /* Centered video */
+    /* Center video with no UI */
     #centerVideo {
-      width: 70vw;       /* change size if needed */
+      width: 70vw;        /* adjust size */
       max-width: 900px;
       border-radius: 12px;
-      box-shadow: 0 0 20px rgba(255,255,255,0.2);
+      object-fit: contain;
     }
   </style>
 </head>
 <body>
 
-  <!-- Music autoplay -->
+  <!-- Autoplay music -->
   <audio src="music/music.mp3" autoplay loop></audio>
 
-  <!-- Center video -->
-  <video id="centerVideo" autoplay loop controls>
+  <!-- Video with NO controls -->
+  <video id="centerVideo" autoplay loop muted playsinline>
     <source src="music/video.mp4" type="video/mp4">
   </video>
 
