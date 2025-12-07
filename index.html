@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Video Center</title>
+  <title>Video with Audio Control</title>
   <style>
     * {
       margin: 0;
@@ -18,26 +18,66 @@
       justify-content: center;
       align-items: center;
       overflow: hidden;
+      position: relative;
+      font-family: Arial, sans-serif;
     }
 
-    /* Center video with no UI */
+    /* Centered video */
     #centerVideo {
-      width: 70vw;        /* adjust size */
+      width: 70vw;
       max-width: 900px;
       border-radius: 12px;
       object-fit: contain;
+      display: block;
+    }
+
+    /* Mute button styling */
+    #muteBtn {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 18px;
+      transition: background 0.3s ease;
+      z-index: 10;
+    }
+
+    #muteBtn:hover {
+      background: rgba(255, 255, 255, 0.35);
     }
   </style>
 </head>
 <body>
 
-  <!-- Autoplay music -->
-  <audio src="music/music.mp3" autoplay loop></audio>
-
-  <!-- Video with NO controls -->
+  <!-- Video muted, no controls -->
   <video id="centerVideo" autoplay loop muted playsinline>
-    <source src="music/video.mp4" type="video/mp4">
+    <source src="music/video.mp4" type="video/mp4" />
   </video>
+
+  <!-- Audio, muted by default -->
+  <audio id="bgAudio" src="music/music.mp3" autoplay loop muted></audio>
+
+  <!-- Mute/Unmute button -->
+  <button id="muteBtn" aria-label="Toggle Audio">🔈</button>
+
+  <script>
+    const audio = document.getElementById('bgAudio');
+    const muteBtn = document.getElementById('muteBtn');
+
+    muteBtn.addEventListener('click', () => {
+      audio.muted = !audio.muted;
+      muteBtn.textContent = audio.muted ? '🔈' : '🔊';
+    });
+  </script>
 
 </body>
 </html>
