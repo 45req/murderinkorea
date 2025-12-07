@@ -85,6 +85,30 @@
       background: rgba(255, 255, 255, 0.35);
     }
 
+    /* New Discord button */
+    #discordBtn {
+      position: fixed;
+      bottom: 20px;
+      left: 70px; /* Next to muteBtn (20px + 40px width + 10px gap) */
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 22px;
+      transition: background 0.3s ease;
+      z-index: 10;
+    }
+
+    #discordBtn:hover {
+      background: rgba(255, 255, 255, 0.35);
+    }
+
     #startOverlay {
       position: fixed;
       top: 0; left: 0;
@@ -165,6 +189,7 @@
   <audio id="bgAudio" loop muted></audio>
 
   <button id="muteBtn" aria-label="Toggle Audio">🔈</button>
+  <button id="discordBtn" aria-label="Discord Profile" title="Discord Profile">💬</button>
 
   <div id="startOverlay">Click to accept the invitation</div>
 
@@ -181,6 +206,7 @@
   <script>
     const audio = document.getElementById('bgAudio');
     const muteBtn = document.getElementById('muteBtn');
+    const discordBtn = document.getElementById('discordBtn');
     const overlay = document.getElementById('startOverlay');
     const emojiContainer = document.getElementById('emojiContainer');
 
@@ -210,6 +236,10 @@
     muteBtn.onclick = () => {
       audio.muted = !audio.muted;
       muteBtn.textContent = audio.muted ? '🔈' : '🔊';
+    };
+
+    discordBtn.onclick = () => {
+      window.open('https://discord.com/users/983949671602995230', '_blank');
     };
 
     overlay.onclick = () => {
