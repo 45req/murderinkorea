@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  
   <title>The Goat</title>
   <meta content="An Invitation" property="og:title" />
   <meta content="You have received an invitation." property="og:description" />
@@ -30,103 +29,7 @@
       cursor: none; /* Hide default cursor */
     }
 
-    #emojiContainer {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-      overflow: hidden;
-      z-index: 0;
-    }
-
-    .emoji {
-      position: absolute;
-      font-size: 24px;
-      user-select: none;
-      animation-timing-function: linear;
-      will-change: transform;
-      opacity: 0.8;
-      filter: drop-shadow(0 0 1px rgba(0,0,0,0.7));
-    }
-
-    #centerVideo {
-      width: 70vw;
-      max-width: 900px;
-      border-radius: 12px;
-      object-fit: contain;
-      display: block;
-      z-index: 1;
-    }
-
-    #muteBtn {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      background: rgba(255, 255, 255, 0.15);
-      border: none;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: white;
-      font-size: 18px;
-      transition: background 0.3s ease;
-      z-index: 10;
-      visibility: hidden;
-    }
-
-    #muteBtn:hover {
-      background: rgba(255, 255, 255, 0.35);
-    }
-
-    #startOverlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,1);
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 1.4rem;
-      cursor: pointer;
-      z-index: 1000;
-      user-select: none;
-    }
-
-    #refreshText {
-      position: fixed;
-      bottom: 5px;
-      right: 10px;
-      font-size: 34px;
-      color: rgba(255, 255, 255, 0.08);
-      user-select: none;
-      pointer-events: none;
-      z-index: 10000;
-    }
-
-    @keyframes floatUp {
-      0% { transform: translateX(0) translateY(0); opacity: 0; }
-      10% { opacity: 0.8; }
-      100% { transform: translateX(var(--drift)) translateY(-120vh); opacity: 0; }
-    }
-
-    #lightning-bg {
-      position: fixed;
-      inset: 0;
-      background: white;
-      opacity: 0;
-      pointer-events: none;
-      z-index: -1;
-      transition: opacity 0.12s ease-out;
-      mix-blend-mode: screen;
-    }
-
+    /* Dancing GIFs */
     #dancingGifRight {
       position: fixed;
       bottom: 10px;
@@ -149,6 +52,7 @@
       transform: none;
     }
 
+    /* Cursor trail container */
     #cursorTrailContainer {
       position: fixed;
       top: 0; left: 0;
@@ -161,7 +65,7 @@
 
     .trail-dot {
       position: absolute;
-      width: 32px;    /* bigger cursor size */
+      width: 32px;
       height: 32px;
       background: url('music/cursor.png') no-repeat center center;
       background-size: contain;
@@ -169,26 +73,11 @@
       will-change: transform, opacity;
       image-rendering: -webkit-optimize-contrast;
       transition: opacity 0.3s ease;
+      transform-origin: center center;
     }
   </style>
 </head>
 <body>
-
-  <div id="emojiContainer"></div>
-
-  <video id="centerVideo" autoplay loop muted playsinline>
-    <source src="music/video.mp4" type="video/mp4" />
-  </video>
-
-  <audio id="bgAudio" loop muted></audio>
-
-  <button id="muteBtn" aria-label="Toggle Audio">🔈</button>
-
-  <div id="startOverlay">Click to accept the invitation</div>
-
-  <div id="refreshText">refresh to cycle songs</div>
-
-  <div id="lightning-bg"></div>
 
   <img id="dancingGifRight" src="music/gif.gif" alt="dancing gif right" />
   <img id="dancingGifLeft" src="music/gif.gif" alt="dancing gif left" />
@@ -196,81 +85,12 @@
   <div id="cursorTrailContainer"></div>
 
   <script>
-    const audio = document.getElementById('bgAudio');
-    const muteBtn = document.getElementById('muteBtn');
-    const overlay = document.getElementById('startOverlay');
-    const emojiContainer = document.getElementById('emojiContainer');
-
-    const songs = [
-      'music/music.mp3',
-      'music/music2.mp3',
-      'music/music3.mp3',
-      'music/music4.mp3',
-      'music/music5.mp3',
-    ];
-
-    let currentSongIndex = Math.floor(Math.random() * songs.length);
-
-    function playSong(i) {
-      audio.src = songs[i];
-      audio.muted = false;
-      audio.play().catch(() => {});
-      muteBtn.style.visibility = 'visible';
-      muteBtn.textContent = '🔊';
-    }
-
-    audio.onended = () => {
-      currentSongIndex = Math.floor(Math.random() * songs.length);
-      playSong(currentSongIndex);
-    };
-
-    muteBtn.onclick = () => {
-      audio.muted = !audio.muted;
-      muteBtn.textContent = audio.muted ? '🔈' : '🔊';
-    };
-
-    overlay.onclick = () => {
-      playSong(currentSongIndex);
-      overlay.style.display = 'none';
-    };
-
-    const emojiList = ['🏝️', '🌴', '👧', '🌊'];
-    for (let i = 0; i < 29; i++) {
-      const e = document.createElement('div');
-      e.className = 'emoji';
-      e.textContent = emojiList[Math.floor(Math.random() * emojiList.length)];
-      e.style.left = Math.random() * 100 + 'vw';
-      e.style.top = (100 + Math.random() * 10) + 'vh';
-      e.style.animation = `floatUp ${10 + Math.random()*15}s linear infinite`;
-      e.style.setProperty('--drift', (Math.random() - 0.5) * 50 + 'vw');
-      emojiContainer.appendChild(e);
-    }
-
-    const lightning = document.getElementById("lightning-bg");
-
-    function lightningFlash() {
-      lightning.style.opacity = "1";
-
-      setTimeout(() => { lightning.style.opacity = "0"; }, 120);
-
-      if (Math.random() > 0.5) {
-        setTimeout(() => {
-          lightning.style.opacity = "1";
-          setTimeout(() => { lightning.style.opacity = "0"; }, 80);
-        }, 200);
-      }
-
-      const nextFlashDelay = 3000 + Math.random() * 5000;
-      setTimeout(lightningFlash, nextFlashDelay);
-    }
-
-    lightningFlash();
-
     (function() {
       const trailContainer = document.getElementById('cursorTrailContainer');
       const trailCount = 10;
       const trailDots = [];
 
+      // Initialize dots at center
       for(let i = 0; i < trailCount; i++) {
         const dot = document.createElement('div');
         dot.classList.add('trail-dot');
@@ -279,6 +99,8 @@
           el: dot,
           x: window.innerWidth / 2,
           y: window.innerHeight / 2,
+          vx: 0, // velocity X (for falling physics)
+          vy: 0, // velocity Y
           scale: 1,
           rotation: 0,
         });
@@ -287,27 +109,73 @@
       let mouseX = window.innerWidth / 2;
       let mouseY = window.innerHeight / 2;
 
+      // Track if mouse is moving
+      let isMoving = false;
+      let moveTimeout;
+
       window.addEventListener('mousemove', (e) => {
         mouseX = e.clientX;
         mouseY = e.clientY;
+
+        isMoving = true;
+        clearTimeout(moveTimeout);
+        moveTimeout = setTimeout(() => {
+          isMoving = false;
+        }, 150); // 150ms after last move, consider stopped
       });
 
       function animate() {
         trailDots.forEach((dot, index) => {
-          const targetX = index === 0 ? mouseX : trailDots[index - 1].x;
-          const targetY = index === 0 ? mouseY : trailDots[index - 1].y;
-
-          dot.x += (targetX - dot.x) * 0.25;  // smoother easing for natural follow
-          dot.y += (targetY - dot.y) * 0.25;
-
-          // Main dot (index 0) no rotation and scale 1
-          if(index === 0) {
+          if (index === 0) {
+            // Main cursor dot sticks exactly at mouse, no rotation, bigger scale
+            dot.x = mouseX;
+            dot.y = mouseY;
+            dot.vx = 0;
+            dot.vy = 0;
             dot.rotation = 0;
-            dot.scale = 1.1; // slightly bigger main dot
+            dot.scale = 1.1;
           } else {
-            // trailing dots spin slowly
-            dot.rotation += 1 + index * 0.3;
-            dot.scale = 1 - index * 0.05;
+            if (isMoving) {
+              // While moving, dots follow the previous dot smoothly with easing
+              const targetX = trailDots[index - 1].x;
+              const targetY = trailDots[index - 1].y;
+
+              dot.x += (targetX - dot.x) * 0.25;
+              dot.y += (targetY - dot.y) * 0.25;
+
+              // Reset velocity because we are following the cursor again
+              dot.vx = 0;
+              dot.vy = 0;
+
+              // Slowly rotate the trail dots
+              dot.rotation += 1 + index * 0.3;
+
+              dot.scale = 1 - index * 0.05;
+
+            } else {
+              // Mouse stopped: dots fall down with physics + spin + fade out
+              dot.vy += 0.15; // gravity acceleration
+              dot.y += dot.vy;
+              dot.x += dot.vx;
+
+              // Slow horizontal drift
+              dot.vx *= 0.98;
+
+              dot.rotation += 2; // spin faster when falling
+
+              // Fade out gradually
+              dot.el.style.opacity = Math.max(0, parseFloat(dot.el.style.opacity || '0.7') - 0.01);
+
+              // Keep scale same
+              dot.scale = 1 - index * 0.05;
+
+              // If dot falls below screen, reset it to invisible off screen bottom
+              if(dot.y > window.innerHeight + 50) {
+                dot.y = window.innerHeight + 50;
+                dot.vy = 0;
+                dot.vx = 0;
+              }
+            }
           }
 
           dot.el.style.transform = `
@@ -315,15 +183,20 @@
             rotate(${dot.rotation}deg)
             scale(${dot.scale})
           `;
-
-          // Opacity fade out for trailing dots
-          dot.el.style.opacity = 0.7 - (index * 0.06);
         });
 
         requestAnimationFrame(animate);
       }
 
       animate();
+
+      // Optional: update trail dots if window resizes (keep them within viewport)
+      window.addEventListener('resize', () => {
+        trailDots.forEach(dot => {
+          dot.x = Math.min(dot.x, window.innerWidth);
+          dot.y = Math.min(dot.y, window.innerHeight);
+        });
+      });
     })();
   </script>
 
