@@ -37,32 +37,19 @@
       top: 0; left: 0;
       width: 100vw;
       height: 100vh;
-      pointer-events: none; /* so clicks go through */
+      pointer-events: none;
       overflow: hidden;
-      z-index: 0; /* behind everything */
+      z-index: 0;
     }
 
     .emoji {
       position: absolute;
+      font-size: 24px; /* fixed size for all emojis */
       user-select: none;
-
-      /* Smaller font size */
-      font-size: 8px;
-
-      /* Pixelated look by boosting contrast & saturation */
-      filter: contrast(200%) saturate(150%);
-
-      /* Sharp white shadow to simulate pixel edges */
-      text-shadow:
-        1px 0 white,
-        -1px 0 white,
-        0 1px white,
-        0 -1px white;
-
-      opacity: 0.9;
-      transform-origin: center center;
-
-      will-change: transform, opacity;
+      animation-timing-function: linear;
+      will-change: transform;
+      opacity: 0.8;
+      filter: drop-shadow(0 0 1px rgba(0,0,0,0.7));
     }
 
     /* Center video */
@@ -93,7 +80,7 @@
       font-size: 18px;
       transition: background 0.3s ease;
       z-index: 10;
-      visibility: hidden; /* hide until audio starts */
+      visibility: hidden;
     }
 
     #muteBtn:hover {
@@ -121,7 +108,7 @@
 </head>
 <body>
 
-  <!-- Floating island emojis -->
+  <!-- Floating emojis -->
   <div id="emojiContainer"></div>
 
   <!-- Video muted autoplay -->
@@ -154,102 +141,65 @@
 
     // On user click on overlay: unmute audio and hide overlay + show mute button
     overlay.addEventListener('click', () => {
-      audio.muted = false;  // unmute music
+      audio.muted = false;
       muteBtn.textContent = '🔊';
       muteBtn.style.visibility = 'visible';
       overlay.style.display = 'none';
-      audio.play(); // just in case
+      audio.play();
     });
 
-    const emojiList = ['🏝️', '🌴', '⛵', '🌅', '🌊'];
-    const emojiCount = 40;
-    const emojis = [];
-
-    function randomBetween(min, max) {
-      return min + Math.random() * (max - min);
-    }
+    const emojiList = ['🏝️', '🌴', '🐚']; // 3 emojis
+    const emojiCount = 20; // total emojis
 
     function createEmoji() {
       const emoji = document.createElement('div');
       emoji.classList.add('emoji');
+
+      // Pick a random emoji from the list
       emoji.textContent = emojiList[Math.floor(Math.random() * emojiList.length)];
 
-      const vw = window.innerWidth / 100;
-      const vh = window.innerHeight / 100;
+      // Random horizontal start position
+      emoji.style.left = Math.random() * 100 + 'vw';
 
-      // Random horizontal position in px
-      emoji.style.left = (randomBetween(0, 100) * vw) + 'px';
+      // Start below viewport (100vh to 110vh)
+      emoji.style.top = (100 + Math.random() * 10) + 'vh';
 
-      // Start exactly at bottom (100vh)
-      emoji.startTop = 100 * vh;
+      // Fixed size (24px) set in CSS, no changes here
 
-      emoji.currentTop = emoji.startTop;
-      emoji.currentLeft = parseFloat(emoji.style.left);
+      // Random opacity for variation
+      emoji.style.opacity = 0.5 + Math.random() * 0.5;
 
-      // Random size smaller (8 to 20px)
-      emoji.style.fontSize = randomBetween(8, 20) + 'px';
+      // Random animation duration (10 to 25 seconds)
+      const duration = 10 + Math.random() * 15;
+      emoji.style.animation = `floatUp ${duration}s linear infinite`;
 
-      // Random opacity 0.4 to 0.9
-      emoji.style.opacity = randomBetween(0.4, 0.9);
-
-      // Drift in px (-20vw to +20vw)
-      emoji.drift = randomBetween(-20, 20) * vw;
-
-      // Rotation degrees -20 to 20
-      emoji.rotationStart = randomBetween(-20, 20);
-      emoji.rotationEnd = randomBetween(-20, 20);
-
-      // Duration 15 - 40 seconds
-      emoji.duration = randomBetween(15, 40);
-
-      // Delay 0 to duration seconds
-      emoji.delay = randomBetween(0, emoji.duration);
+      // Random horizontal drifting using CSS variable
+      const drift = (Math.random() - 0.5) * 50; // -25vw to +25vw
+      emoji.style.setProperty('--drift', drift + 'vw');
 
       emojiContainer.appendChild(emoji);
-      emojis.push(emoji);
     }
 
-    for(let i = 0; i < emojiCount; i++) {
+    for (let i = 0; i < emojiCount; i++) {
       createEmoji();
     }
-
-    let lastTimestamp = null;
-
-    function animate(timestamp) {
-      if(!lastTimestamp) lastTimestamp = timestamp;
-      const elapsedTime = (timestamp - lastTimestamp) / 1000;
-      lastTimestamp = timestamp;
-
-      emojis.forEach(emoji => {
-        let totalElapsed = ((timestamp / 1000) - emoji.delay) % emoji.duration;
-        if (totalElapsed < 0) totalElapsed += emoji.duration;
-        let progress = totalElapsed / emoji.duration;
-
-        // Float upwards by 100vh (full viewport height)
-        emoji.currentTop = emoji.startTop - (progress * window.innerHeight);
-
-        // Horizontal sine drift
-        const driftX = emoji.drift * Math.sin(progress * 2 * Math.PI);
-
-        // Rotation lerp
-        const rotation = emoji.rotationStart + (emoji.rotationEnd - emoji.rotationStart) * progress;
-
-        // Fade in/out opacity ease
-        let baseOpacity = parseFloat(emoji.style.opacity) || 0.8;
-        if (progress < 0.1) {
-          emoji.style.opacity = (progress / 0.1) * baseOpacity;
-        } else if (progress > 0.9) {
-          emoji.style.opacity = ((1 - progress) / 0.1) * baseOpacity;
-        } else {
-          emoji.style.opacity = baseOpacity;
-        }
-
-        emoji.style.transform = `translate(${driftX}px, ${emoji.currentTop}px) rotate(${rotation}deg)`;
-      });
-
-      requestAnimationFrame(animate);
-    }
-    requestAnimationFrame(animate);
   </script>
+
+  <style>
+    @keyframes floatUp {
+      0% {
+        transform: translateX(0) translateY(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateX(var(--drift)) translateY(-120vh);
+        opacity: 0;
+      }
+    }
+  </style>
+
 </body>
 </html>
