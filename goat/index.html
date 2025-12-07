@@ -22,14 +22,34 @@
     body, html {
       height: 100%;
       width: 100%;
-      background: url('music/background.jpg') no-repeat center center fixed;
-      background-size: cover;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      background: black;
       overflow: hidden;
       position: relative;
       font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Floating emojis container */
+    #emojiContainer {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none; /* so clicks go through */
+      overflow: hidden;
+      z-index: 0; /* behind everything */
+    }
+
+    .emoji {
+      position: absolute;
+      font-size: 24px;
+      user-select: none;
+      animation-timing-function: linear;
+      will-change: transform;
+      opacity: 0.8;
+      filter: drop-shadow(0 0 1px rgba(0,0,0,0.7));
     }
 
     /* Center video */
@@ -88,6 +108,9 @@
 </head>
 <body>
 
+  <!-- Floating island emojis -->
+  <div id="emojiContainer"></div>
+
   <!-- Video muted autoplay -->
   <video id="centerVideo" autoplay loop muted playsinline>
     <source src="music/video.mp4" type="video/mp4" />
@@ -108,6 +131,7 @@
     const audio = document.getElementById('bgAudio');
     const muteBtn = document.getElementById('muteBtn');
     const overlay = document.getElementById('startOverlay');
+    const emojiContainer = document.getElementById('emojiContainer');
 
     // Toggle mute button
     muteBtn.addEventListener('click', () => {
@@ -123,6 +147,59 @@
       overlay.style.display = 'none';
       audio.play(); // just in case
     });
+
+    // Create floating emojis
+    const emojiCount = 25;
+    const emojis = [];
+
+    function createEmoji() {
+      const emoji = document.createElement('div');
+      emoji.classList.add('emoji');
+      emoji.textContent = '🏝️'; // island emoji
+
+      // Random horizontal start position
+      emoji.style.left = Math.random() * 100 + 'vw';
+      // Start below the viewport (100vh to 110vh)
+      emoji.style.top = (100 + Math.random() * 10) + 'vh';
+      // Random size between 16px and 36px font size
+      emoji.style.fontSize = (16 + Math.random() * 20) + 'px';
+      // Random opacity
+      emoji.style.opacity = 0.5 + Math.random() * 0.5;
+
+      // Random animation duration (10 to 25 seconds)
+      const duration = 10 + Math.random() * 15;
+      emoji.style.animation = `floatUp ${duration}s linear infinite`;
+
+      // Random horizontal drifting using CSS variable
+      const drift = (Math.random() - 0.5) * 50; // -25 to +25 vw
+      emoji.style.setProperty('--drift', drift + 'vw');
+
+      emojiContainer.appendChild(emoji);
+      emojis.push(emoji);
+    }
+
+    for (let i = 0; i < emojiCount; i++) {
+      createEmoji();
+    }
+
   </script>
+
+  <style>
+    /* Float up animation with side drift using CSS variable */
+    @keyframes floatUp {
+      0% {
+        transform: translateX(0) translateY(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateX(var(--drift)) translateY(-120vh);
+        opacity: 0;
+      }
+    }
+  </style>
+
 </body>
 </html>
