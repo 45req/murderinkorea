@@ -27,7 +27,6 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      /* Hide default cursor since we have a custom trail */
       cursor: none;
     }
 
@@ -128,7 +127,6 @@
       mix-blend-mode: screen;
     }
 
-    /* Dancing GIF bottom right mirrored */
     #dancingGifRight {
       position: fixed;
       bottom: 10px;
@@ -137,10 +135,9 @@
       height: auto;
       z-index: 25;
       pointer-events: none;
-      transform: scaleX(-1); /* mirror horizontally */
+      transform: scaleX(-1);
     }
 
-    /* Dancing GIF bottom left normal */
     #dancingGifLeft {
       position: fixed;
       bottom: 10px;
@@ -152,7 +149,6 @@
       transform: none;
     }
 
-    /* Cursor trail container */
     #cursorTrailContainer {
       position: fixed;
       top: 0; left: 0;
@@ -163,7 +159,6 @@
       z-index: 9999;
     }
 
-    /* Each trail dot */
     .trail-dot {
       position: absolute;
       width: 24px;
@@ -194,13 +189,9 @@
 
   <div id="lightning-bg"></div>
 
-  <!-- Dancing GIF bottom right mirrored -->
   <img id="dancingGifRight" src="music/gif.gif" alt="dancing gif right" />
-
-  <!-- Dancing GIF bottom left normal -->
   <img id="dancingGifLeft" src="music/gif.gif" alt="dancing gif left" />
 
-  <!-- Cursor trail container -->
   <div id="cursorTrailContainer"></div>
 
   <script>
@@ -254,7 +245,6 @@
       emojiContainer.appendChild(e);
     }
 
-    /* Lightning background script */
     const lightning = document.getElementById("lightning-bg");
 
     function lightningFlash() {
@@ -275,13 +265,11 @@
 
     lightningFlash();
 
-    // Cursor trail effect
     (function() {
       const trailContainer = document.getElementById('cursorTrailContainer');
-      const trailCount = 10; // number of trail dots
+      const trailCount = 10;
       const trailDots = [];
 
-      // Create trail dots
       for(let i = 0; i < trailCount; i++) {
         const dot = document.createElement('div');
         dot.classList.add('trail-dot');
@@ -305,28 +293,23 @@
 
       function animate() {
         trailDots.forEach((dot, index) => {
-          // Each dot moves towards previous dot or mouse
           const targetX = index === 0 ? mouseX : trailDots[index - 1].x;
           const targetY = index === 0 ? mouseY : trailDots[index - 1].y;
 
-          // Smooth follow with easing
           dot.x += (targetX - dot.x) * 0.3;
           dot.y += (targetY - dot.y) * 0.3;
 
-          // Rotation spins slowly
-          dot.rotation += 5 + index; // faster for trailing dots
+          // slower spin here
+          dot.rotation += 1 + index * 0.5;
 
-          // Scale shrinks for trailing dots
           dot.scale = 1 - (index * 0.05);
 
-          // Apply styles
           dot.el.style.transform = `
-            translate3d(${dot.x - 12}px, ${dot.y - 12}px, 0) 
+            translate3d(${dot.x - 12}px, ${dot.y - 12}px, 0)
             rotate(${dot.rotation}deg)
             scale(${dot.scale})
           `;
 
-          // Fade out with index
           dot.el.style.opacity = 0.7 - (index * 0.06);
         });
 
