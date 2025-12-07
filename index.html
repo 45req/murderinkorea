@@ -148,11 +148,9 @@
     const muteBtn = document.getElementById('muteBtn');
     const overlay = document.getElementById('startOverlay');
     const emojiContainer = document.getElementById('emojiContainer');
-    const refreshText = document.getElementById('refreshText');
 
-    // 🎵 Songs array including music.mp3 + others:
+    // Songs list
     const songs = [
-      'music/music1.mp3',
       'music/music.mp3',
       'music/music2.mp3',
       'music/music3.mp3',
@@ -160,37 +158,33 @@
       'music/music5.mp3',
     ];
 
-    let currentSongIndex = 0;
+    let currentSongIndex = Math.floor(Math.random() * songs.length);
 
-    // Play song by index
     function playSong(index) {
       audio.src = songs[index];
       audio.muted = false;
-      audio.play().catch(() => {}); // catch autoplay errors
+      audio.play().catch(() => {});
       muteBtn.style.visibility = 'visible';
       muteBtn.textContent = '🔊';
     }
 
-    // On song end, cycle to next
     audio.addEventListener('ended', () => {
-      currentSongIndex = (currentSongIndex + 1) % songs.length;
+      currentSongIndex = Math.floor(Math.random() * songs.length);
       playSong(currentSongIndex);
     });
 
-    // Toggle mute/unmute
     muteBtn.addEventListener('click', () => {
       audio.muted = !audio.muted;
       muteBtn.textContent = audio.muted ? '🔈' : '🔊';
     });
 
-    // Start music on overlay click
     overlay.addEventListener('click', () => {
       playSong(currentSongIndex);
       overlay.style.display = 'none';
     });
 
-    // Create floating emojis
-    const emojiList = ['🏝️', '🌴', '🐚']; // 3 emojis
+    // Emoji setup
+    const emojiList = ['🏝️', '🌴', '🐚'];
     const emojiCount = 20;
 
     function createEmoji() {
