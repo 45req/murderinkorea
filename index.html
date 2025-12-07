@@ -7,8 +7,8 @@
   <meta content="Jeffrey Edward Epstein" property="og:title" />
   <meta content="Jeffrey Edward Epstein was an American financier and child sex offender. He began his professional career as a teacher at the Dalton School." property="og:description" />
   <meta content="https://jorkin.it.com/" property="og:url" />
-  <meta content="https://cdn.discordapp.com/attachments/1397687603536592976/1447038357946503249/skynews-epstein-trump_6935553_1.jpg?ex=69362afd&is=6934d97d&hm=bea7e25beb680e558eafe4c1666329e815fc285231c306a4942d9dd6eac8f03d&" property="og:image" />
-  <meta content="#2596be" data-react-helmet="true" name="theme-color" />
+  <meta content="https://cdn.discordapp.com/attachments/1397687603536592976/1447028820757713128/iu_.png?ex=6936221b&is=6934d09b&hm=319ec9dd15ca8e5e961977c5db172516eb627cb60cc7249b57562fa533021c85" property="og:image" />
+  <meta content="#43B581" data-react-helmet="true" name="theme-color" />
   
   <link rel="icon" href="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.emojiterra.com%2Fgoogle%2Fnoto-emoji%2Funicode-15%2Fcolor%2F1024px%2F1f3dd.png&f=1&nofb=1&ipt=24130184d9a3c1855008376160967a67468addc110f50aab7a511cc334c0035f" type="image/png" />
 
@@ -104,6 +104,19 @@
       z-index: 1000;
       user-select: none;
     }
+
+    /* Small almost invisible text */
+    #refreshText {
+      position: fixed;
+      bottom: 5px;
+      right: 10px;
+      font-size: 10px;
+      color: rgba(0,0,0,0.15);
+      font-family: Arial, sans-serif;
+      user-select: none;
+      pointer-events: none;
+      z-index: 10000;
+    }
   </style>
 </head>
 <body>
@@ -116,8 +129,8 @@
     <source src="music/video.mp4" type="video/mp4" />
   </video>
 
-  <!-- Audio starts muted -->
-  <audio id="bgAudio" src="music/music.mp3" autoplay loop muted></audio>
+  <!-- Audio element -->
+  <audio id="bgAudio" loop muted></audio>
 
   <!-- Mute/unmute button, hidden initially -->
   <button id="muteBtn" aria-label="Toggle Audio">🔈</button>
@@ -127,56 +140,69 @@
     Click anywhere to start the music
   </div>
 
+  <!-- Refresh text -->
+  <div id="refreshText">refresh to cycle songs</div>
+
   <script>
     const audio = document.getElementById('bgAudio');
     const muteBtn = document.getElementById('muteBtn');
     const overlay = document.getElementById('startOverlay');
     const emojiContainer = document.getElementById('emojiContainer');
+    const refreshText = document.getElementById('refreshText');
 
-    // Toggle mute button
+    // 🎵 Songs array including music.mp3 + others:
+    const songs = [
+      'music/music1.mp3',
+      'music/music.mp3',
+      'music/music2.mp3',
+      'music/music3.mp3',
+      'music/music4.mp3',
+      'music/music5.mp3',
+    ];
+
+    let currentSongIndex = 0;
+
+    // Play song by index
+    function playSong(index) {
+      audio.src = songs[index];
+      audio.muted = false;
+      audio.play().catch(() => {}); // catch autoplay errors
+      muteBtn.style.visibility = 'visible';
+      muteBtn.textContent = '🔊';
+    }
+
+    // On song end, cycle to next
+    audio.addEventListener('ended', () => {
+      currentSongIndex = (currentSongIndex + 1) % songs.length;
+      playSong(currentSongIndex);
+    });
+
+    // Toggle mute/unmute
     muteBtn.addEventListener('click', () => {
       audio.muted = !audio.muted;
       muteBtn.textContent = audio.muted ? '🔈' : '🔊';
     });
 
-    // On user click on overlay: unmute audio and hide overlay + show mute button
+    // Start music on overlay click
     overlay.addEventListener('click', () => {
-      audio.muted = false;
-      muteBtn.textContent = '🔊';
-      muteBtn.style.visibility = 'visible';
+      playSong(currentSongIndex);
       overlay.style.display = 'none';
-      audio.play();
     });
 
-    const emojiList = ['🏝️', '🌴', '👧', '🌊']; // 3 emojis
-    const emojiCount = 20; // total emojis
+    // Create floating emojis
+    const emojiList = ['🏝️', '🌴', '🐚']; // 3 emojis
+    const emojiCount = 20;
 
     function createEmoji() {
       const emoji = document.createElement('div');
       emoji.classList.add('emoji');
-
-      // Pick a random emoji from the list
       emoji.textContent = emojiList[Math.floor(Math.random() * emojiList.length)];
-
-      // Random horizontal start position
       emoji.style.left = Math.random() * 100 + 'vw';
-
-      // Start below viewport (100vh to 110vh)
       emoji.style.top = (100 + Math.random() * 10) + 'vh';
-
-      // Fixed size (24px) set in CSS, no changes here
-
-      // Random opacity for variation
-      emoji.style.opacity = 0.5 + Math.random() * 0.5;
-
-      // Random animation duration (10 to 25 seconds)
-      const duration = 10 + Math.random() * 15;
-      emoji.style.animation = `floatUp ${duration}s linear infinite`;
-
-      // Random horizontal drifting using CSS variable
-      const drift = (Math.random() - 0.5) * 50; // -25vw to +25vw
+      emoji.style.opacity = 0.8;
+      emoji.style.animation = `floatUp ${10 + Math.random() * 15}s linear infinite`;
+      const drift = (Math.random() - 0.5) * 50;
       emoji.style.setProperty('--drift', drift + 'vw');
-
       emojiContainer.appendChild(emoji);
     }
 
