@@ -21,13 +21,14 @@
       height: 100%;
       width: 100%;
       background: black;
-      overflow: hidden; /* prevent scrollbars */
+      overflow: hidden;
       position: relative;
       font-family: Arial, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
-      cursor: url('music/cur.cur') 16 16, auto;
+
+      cursor: url('music/cursor.png') 16 16, auto;
     }
 
     #emojiContainer {
@@ -116,20 +117,6 @@
       100% { transform: translateX(var(--drift)) translateY(-120vh); opacity: 0; }
     }
 
-    @keyframes slideLeft {
-      0% {
-        right: -349px;
-        transform: scaleX(-1);
-      }
-      50% {
-        right: calc(100vw - 349px);
-      }
-      100% {
-        right: 100vw;
-        transform: scaleX(-1);
-      }
-    }
-
     #lightning-bg {
       position: fixed;
       inset: 0;
@@ -141,7 +128,7 @@
       mix-blend-mode: screen;
     }
 
-    /* Bottom right fixed GIF */
+    /* Bottom right fixed original GIF */
     #bottomGif {
       position: fixed;
       bottom: 10px;
@@ -151,23 +138,21 @@
       z-index: 20;
       pointer-events: none;
       transform: none;
-      outline: none;
     }
 
-    /* Dancing GIF sliding left, mirrored */
-    #dancingGif {
+    /* Dancing GIF bottom right, mirrored */
+    #dancingGifRight {
       position: fixed;
       bottom: 10px;
+      right: 10px;
       width: 349px;
       height: auto;
       z-index: 25;
       pointer-events: none;
-      animation: slideLeft 12s linear infinite;
-      transform-origin: center;
-      outline: none;
+      transform: scaleX(-1); /* mirror horizontally */
     }
 
-    /* Dancing GIF fixed on bottom left */
+    /* Dancing GIF bottom left normal */
     #dancingGifLeft {
       position: fixed;
       bottom: 10px;
@@ -177,12 +162,6 @@
       z-index: 25;
       pointer-events: none;
       transform: none;
-      outline: none;
-
-      /* DEBUG: visible border */
-      /* Remove border once confirmed visible */
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      background: transparent;
     }
   </style>
 </head>
@@ -204,13 +183,13 @@
 
   <div id="lightning-bg"></div>
 
-  <!-- Bottom right fixed GIF -->
+  <!-- Bottom right original GIF -->
   <img id="bottomGif" src="music/gif.gif" alt="bottom gif" />
 
-  <!-- Dancing GIF sliding left, mirrored -->
-  <img id="dancingGif" src="music/dancing.gif" alt="dancing gif" />
+  <!-- Dancing GIF bottom right mirrored -->
+  <img id="dancingGifRight" src="music/dancing.gif" alt="dancing gif right" />
 
-  <!-- Dancing GIF fixed bottom left -->
+  <!-- Dancing GIF bottom left normal -->
   <img id="dancingGifLeft" src="music/dancing.gif" alt="dancing gif left" />
 
   <script>
