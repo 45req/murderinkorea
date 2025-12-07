@@ -28,6 +28,7 @@
       justify-content: center;
       align-items: center;
 
+      /* Make sure to have the correct path to cursor.png */
       cursor: url('music/cursor.png') 16 16, auto;
     }
 
@@ -128,19 +129,7 @@
       mix-blend-mode: screen;
     }
 
-    /* Bottom right original GIF */
-    #bottomGif {
-      position: fixed;
-      bottom: 10px;
-      right: 10px;
-      width: 349px;
-      height: auto;
-      z-index: 20;
-      pointer-events: none;
-      transform: none;
-    }
-
-    /* Dancing GIF bottom right, mirrored */
+    /* Dancing GIF bottom right mirrored */
     #dancingGifRight {
       position: fixed;
       bottom: 10px;
@@ -182,9 +171,6 @@
   <div id="refreshText">refresh to cycle songs</div>
 
   <div id="lightning-bg"></div>
-
-  <!-- Bottom right original GIF -->
-  <img id="bottomGif" src="music/gif.gif" alt="bottom gif" />
 
   <!-- Dancing GIF bottom right mirrored -->
   <img id="dancingGifRight" src="music/gif.gif" alt="dancing gif right" />
