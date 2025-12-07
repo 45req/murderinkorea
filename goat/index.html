@@ -45,11 +45,23 @@
     .emoji {
       position: absolute;
       user-select: none;
-      filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
-      opacity: 0.8;
+
+      /* Smaller font size */
+      font-size: 8px;
+
+      /* Pixelated look by boosting contrast & saturation */
+      filter: contrast(200%) saturate(150%);
+
+      /* Sharp white shadow to simulate pixel edges */
+      text-shadow:
+        1px 0 white,
+        -1px 0 white,
+        0 1px white,
+        0 -1px white;
+
+      opacity: 0.9;
       transform-origin: center center;
-      font-size: 24px;
-      text-shadow: 0 0 6px rgba(255 255 255 / 0.6);
+
       will-change: transform, opacity;
     }
 
@@ -149,7 +161,7 @@
       audio.play(); // just in case
     });
 
-    const emojiList = ['🏝️', '🌴', '⛵', '👧', '🌊'];
+    const emojiList = ['🏝️', '🌴', '⛵', '🌅', '🌊'];
     const emojiCount = 40;
     const emojis = [];
 
@@ -162,36 +174,35 @@
       emoji.classList.add('emoji');
       emoji.textContent = emojiList[Math.floor(Math.random() * emojiList.length)];
 
-      // Random horizontal position in px (we'll use vw units converted to px)
       const vw = window.innerWidth / 100;
-      const leftPx = randomBetween(0, 100) * vw;
-      emoji.style.left = leftPx + 'px';
-
-      // Random vertical start position between 100vh and 110vh (below screen)
       const vh = window.innerHeight / 100;
-      emoji.startTop = (100 + randomBetween(0, 10)) * vh;
 
-      // Save current position as float for animation
+      // Random horizontal position in px
+      emoji.style.left = (randomBetween(0, 100) * vw) + 'px';
+
+      // Start exactly at bottom (100vh)
+      emoji.startTop = 100 * vh;
+
       emoji.currentTop = emoji.startTop;
-      emoji.currentLeft = leftPx;
+      emoji.currentLeft = parseFloat(emoji.style.left);
 
-      // Random size between 16 and 48 px
-      emoji.style.fontSize = randomBetween(16, 48) + 'px';
+      // Random size smaller (8 to 20px)
+      emoji.style.fontSize = randomBetween(8, 20) + 'px';
 
       // Random opacity 0.4 to 0.9
       emoji.style.opacity = randomBetween(0.4, 0.9);
 
-      // Drift in px (-30vw to +30vw)
-      emoji.drift = randomBetween(-30, 30) * vw;
+      // Drift in px (-20vw to +20vw)
+      emoji.drift = randomBetween(-20, 20) * vw;
 
       // Rotation degrees -20 to 20
       emoji.rotationStart = randomBetween(-20, 20);
       emoji.rotationEnd = randomBetween(-20, 20);
 
-      // Animation duration in seconds
+      // Duration 15 - 40 seconds
       emoji.duration = randomBetween(15, 40);
 
-      // Animation delay in seconds
+      // Delay 0 to duration seconds
       emoji.delay = randomBetween(0, emoji.duration);
 
       emojiContainer.appendChild(emoji);
@@ -210,21 +221,20 @@
       lastTimestamp = timestamp;
 
       emojis.forEach(emoji => {
-        // Calculate total animation time elapsed with delay included
         let totalElapsed = ((timestamp / 1000) - emoji.delay) % emoji.duration;
         if (totalElapsed < 0) totalElapsed += emoji.duration;
-        let progress = totalElapsed / emoji.duration; // 0 to 1
+        let progress = totalElapsed / emoji.duration;
 
-        // Vertical position: from startTop upwards by 120vh
-        emoji.currentTop = emoji.startTop - (progress * window.innerHeight * 1.2);
+        // Float upwards by 100vh (full viewport height)
+        emoji.currentTop = emoji.startTop - (progress * window.innerHeight);
 
-        // Horizontal drift: sinusoidal side movement
+        // Horizontal sine drift
         const driftX = emoji.drift * Math.sin(progress * 2 * Math.PI);
 
-        // Rotation interpolation
+        // Rotation lerp
         const rotation = emoji.rotationStart + (emoji.rotationEnd - emoji.rotationStart) * progress;
 
-        // Fade in/out opacity easing
+        // Fade in/out opacity ease
         let baseOpacity = parseFloat(emoji.style.opacity) || 0.8;
         if (progress < 0.1) {
           emoji.style.opacity = (progress / 0.1) * baseOpacity;
@@ -234,7 +244,6 @@
           emoji.style.opacity = baseOpacity;
         }
 
-        // Apply transform
         emoji.style.transform = `translate(${driftX}px, ${emoji.currentTop}px) rotate(${rotation}deg)`;
       });
 
