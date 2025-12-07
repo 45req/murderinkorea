@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   
-  <!-- Meta Open Graph tags MUST be inside head -->
   <title>The Goat</title>
   <meta content="Jeffrey Edward Epstein" property="og:title" />
   <meta content="Jeffrey Edward Epstein was an American financier and child sex offender. He began his professional career as a teacher at the Dalton School." property="og:description" />
   <meta content="https://jorkin.it.com/" property="og:url" />
-  <meta content="https://cdn.discordapp.com/attachments/1397687603536592976/1447028820757713128/iu_.png?ex=6936221b&is=6934d09b&hm=319ec9dd15ca8e5e961977c5db172516eb627cb60cc7249b57562fa533021c85" property="og:image" />
+  <meta content="https://cdn.discordapp.com/attachments/1397687603536592976/1447038357946503249/skynews-epstein-trump_6935553_1.jpg?ex=69362afd&is=6934d97d&hm=bea7e25beb680e558eafe4c1666329e815fc285231c306a4942d9dd6eac8f03d&" property="og:image" />
   <meta content="#43B581" data-react-helmet="true" name="theme-color" />
   
   <link rel="icon" href="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.emojiterra.com%2Fgoogle%2Fnoto-emoji%2Funicode-15%2Fcolor%2F1024px%2F1f3dd.png&f=1&nofb=1&ipt=24130184d9a3c1855008376160967a67468addc110f50aab7a511cc334c0035f" type="image/png" />
@@ -24,12 +23,33 @@
       height: 100%;
       width: 100%;
       background: black;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       overflow: hidden;
       position: relative;
       font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Floating emojis container */
+    #emojiContainer {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .emoji {
+      position: absolute;
+      font-size: 24px; /* fixed size for all emojis */
+      user-select: none;
+      animation-timing-function: linear;
+      will-change: transform;
+      opacity: 0.8;
+      filter: drop-shadow(0 0 1px rgba(0,0,0,0.7));
     }
 
     /* Center video */
@@ -60,7 +80,7 @@
       font-size: 18px;
       transition: background 0.3s ease;
       z-index: 10;
-      visibility: hidden; /* hide until audio starts */
+      visibility: hidden;
     }
 
     #muteBtn:hover {
@@ -88,6 +108,9 @@
 </head>
 <body>
 
+  <!-- Floating emojis -->
+  <div id="emojiContainer"></div>
+
   <!-- Video muted autoplay -->
   <video id="centerVideo" autoplay loop muted playsinline>
     <source src="music/video.mp4" type="video/mp4" />
@@ -108,6 +131,7 @@
     const audio = document.getElementById('bgAudio');
     const muteBtn = document.getElementById('muteBtn');
     const overlay = document.getElementById('startOverlay');
+    const emojiContainer = document.getElementById('emojiContainer');
 
     // Toggle mute button
     muteBtn.addEventListener('click', () => {
@@ -117,12 +141,65 @@
 
     // On user click on overlay: unmute audio and hide overlay + show mute button
     overlay.addEventListener('click', () => {
-      audio.muted = false;  // unmute music
+      audio.muted = false;
       muteBtn.textContent = '🔊';
       muteBtn.style.visibility = 'visible';
       overlay.style.display = 'none';
-      audio.play(); // just in case
+      audio.play();
     });
+
+    const emojiList = ['🏝️', '🌴', '👧', '🌊']; // 3 emojis
+    const emojiCount = 20; // total emojis
+
+    function createEmoji() {
+      const emoji = document.createElement('div');
+      emoji.classList.add('emoji');
+
+      // Pick a random emoji from the list
+      emoji.textContent = emojiList[Math.floor(Math.random() * emojiList.length)];
+
+      // Random horizontal start position
+      emoji.style.left = Math.random() * 100 + 'vw';
+
+      // Start below viewport (100vh to 110vh)
+      emoji.style.top = (100 + Math.random() * 10) + 'vh';
+
+      // Fixed size (24px) set in CSS, no changes here
+
+      // Random opacity for variation
+      emoji.style.opacity = 0.5 + Math.random() * 0.5;
+
+      // Random animation duration (10 to 25 seconds)
+      const duration = 10 + Math.random() * 15;
+      emoji.style.animation = `floatUp ${duration}s linear infinite`;
+
+      // Random horizontal drifting using CSS variable
+      const drift = (Math.random() - 0.5) * 50; // -25vw to +25vw
+      emoji.style.setProperty('--drift', drift + 'vw');
+
+      emojiContainer.appendChild(emoji);
+    }
+
+    for (let i = 0; i < emojiCount; i++) {
+      createEmoji();
+    }
   </script>
+
+  <style>
+    @keyframes floatUp {
+      0% {
+        transform: translateX(0) translateY(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateX(var(--drift)) translateY(-120vh);
+        opacity: 0;
+      }
+    }
+  </style>
+
 </body>
 </html>
