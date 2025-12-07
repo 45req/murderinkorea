@@ -25,7 +25,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      cursor: url('music/cur.cur'), auto;
+
+      cursor: url('music/cur.cur'), url('music/cur.png') 16 16, auto;
     }
 
     #emojiContainer {
@@ -112,19 +113,33 @@
       100% { transform: translateX(var(--drift)) translateY(-120vh); opacity: 0; }
     }
 
-    /* ---- LIGHTNING BACKGROUND ---- */
+    /* Dancing GIF animation from right to left */
+    @keyframes slideLeft {
+      0% {
+        right: -349px;
+        transform: scaleX(-1); /* mirrored */
+      }
+      50% {
+        right: calc(100vw - 349px); /* fully visible on right */
+      }
+      100% {
+        right: 100vw; /* fully left off-screen */
+        transform: scaleX(-1);
+      }
+    }
+
     #lightning-bg {
       position: fixed;
       inset: 0;
       background: white;
       opacity: 0;
       pointer-events: none;
-      z-index: -1;        /* stays BEHIND your page */
+      z-index: -1;
       transition: opacity 0.12s ease-out;
       mix-blend-mode: screen;
     }
 
-    /* Bottom GIF styling */
+    /* Bottom right fixed GIF */
     #bottomGif {
       position: fixed;
       bottom: 10px;
@@ -134,6 +149,17 @@
       z-index: 20;
       pointer-events: none;
       transform: none;
+    }
+
+    /* Dancing GIF moving left */
+    #dancingGif {
+      position: fixed;
+      bottom: 10px;
+      width: 349px;
+      height: auto;
+      z-index: 25;
+      pointer-events: none;
+      animation: slideLeft 12s linear infinite;
     }
   </style>
 </head>
@@ -153,11 +179,13 @@
 
   <div id="refreshText">refresh to cycle songs</div>
 
-  <!-- Lightning background layer -->
   <div id="lightning-bg"></div>
 
-  <!-- Bottom GIF -->
+  <!-- Bottom right GIF -->
   <img id="bottomGif" src="music/gif.gif" alt="bottom gif" />
+
+  <!-- Dancing GIF sliding left, mirrored -->
+  <img id="dancingGif" src="music/dancing.gif" alt="dancing gif" />
 
   <script>
     const audio = document.getElementById('bgAudio');
