@@ -5,19 +5,15 @@
   
   <title>The Goat</title>
   <meta content="An Invitation" property="og:title" />
-  <meta content="You have received An invitation from jeffrey epstein." property="og:description" />
-  <meta content="https://jorkin.it.com/" property="og:url" />
+  <meta content="You have received an invitation." property="og:description" />
+  <meta content="https://jeffreyepstein.club/" property="og:url" />
   <meta content="https://www.pngkit.com/png/detail/211-2115595_invitation-letter-letter.png" property="og:image" />
-  <meta content="#242429" data-react-helmet="true" name="theme-color" />
+  <meta content="#242429" name="theme-color" />
   
-  <link rel="icon" href="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.emojiterra.com%2Fgoogle%2Fnoto-emoji%2Funicode-15%2Fcolor%2F1024px%2F1f3dd.png&f=1&nofb=1&ipt=24130184d9a3c1855008376160967a67468addc110f50aab7a511cc334c0035f" type="image/png" />
+  <link rel="icon" href="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.emojiterra.com%2Fgoogle%2Fnoto-emoji%2Funicode-15%2Fcolor%2F1024px%2F1f3dd.png&f=1&nofb=1" type="image/png" />
 
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body, html {
       height: 100%;
@@ -31,7 +27,6 @@
       align-items: center;
     }
 
-    /* Floating emojis container */
     #emojiContainer {
       position: fixed;
       top: 0; left: 0;
@@ -44,7 +39,7 @@
 
     .emoji {
       position: absolute;
-      font-size: 24px; /* fixed size for all emojis */
+      font-size: 24px;
       user-select: none;
       animation-timing-function: linear;
       will-change: transform;
@@ -52,7 +47,6 @@
       filter: drop-shadow(0 0 1px rgba(0,0,0,0.7));
     }
 
-    /* Center video */
     #centerVideo {
       width: 70vw;
       max-width: 900px;
@@ -62,7 +56,6 @@
       z-index: 1;
     }
 
-    /* Mute button */
     #muteBtn {
       position: fixed;
       bottom: 20px;
@@ -83,11 +76,8 @@
       visibility: hidden;
     }
 
-    #muteBtn:hover {
-      background: rgba(255, 255, 255, 0.35);
-    }
+    #muteBtn:hover { background: rgba(255, 255, 255, 0.35); }
 
-    /* Overlay to get user click */
     #startOverlay {
       position: fixed;
       top: 0; left: 0;
@@ -99,50 +89,59 @@
       justify-content: center;
       align-items: center;
       font-size: 1.4rem;
-      text-align: center;
       cursor: pointer;
       z-index: 1000;
       user-select: none;
     }
 
-    /* Subtle bottom-right refresh text */
     #refreshText {
       position: fixed;
       bottom: 5px;
       right: 10px;
       font-size: 34px;
-      color: rgba(255, 255, 255, 0.08); /* very faint white */
-      font-family: Arial, sans-serif;
+      color: rgba(255, 255, 255, 0.08);
       user-select: none;
       pointer-events: none;
       z-index: 10000;
-      text-shadow: 0 0 1px rgba(0, 0, 0, 0.15);
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateX(0) translateY(0); opacity: 0; }
+      10% { opacity: 0.8; }
+      100% { transform: translateX(var(--drift)) translateY(-120vh); opacity: 0; }
+    }
+
+    /* ---- LIGHTNING BACKGROUND ---- */
+    #lightning-bg {
+      position: fixed;
+      inset: 0;
+      background: white;
+      opacity: 0;
+      pointer-events: none;
+      z-index: -1;        /* stays BEHIND your page */
+      transition: opacity 0.12s ease-out;
+      mix-blend-mode: screen;
     }
   </style>
 </head>
 <body>
 
-  <!-- Floating emojis -->
   <div id="emojiContainer"></div>
 
-  <!-- Video muted autoplay -->
   <video id="centerVideo" autoplay loop muted playsinline>
     <source src="music/video.mp4" type="video/mp4" />
   </video>
 
-  <!-- Audio element -->
   <audio id="bgAudio" loop muted></audio>
 
-  <!-- Mute/unmute button, hidden initially -->
   <button id="muteBtn" aria-label="Toggle Audio">🔈</button>
 
-  <!-- Overlay asking user to click -->
-  <div id="startOverlay">
-    Click to accept the invitation
-  </div>
+  <div id="startOverlay">Click to accept the invitation</div>
 
-  <!-- Subtle refresh text -->
   <div id="refreshText">refresh to cycle songs</div>
+
+  <!-- Lightning background layer -->
+  <div id="lightning-bg"></div>
 
   <script>
     const audio = document.getElementById('bgAudio');
@@ -150,7 +149,6 @@
     const overlay = document.getElementById('startOverlay');
     const emojiContainer = document.getElementById('emojiContainer');
 
-    // Songs list
     const songs = [
       'music/music.mp3',
       'music/music2.mp3',
@@ -161,66 +159,62 @@
 
     let currentSongIndex = Math.floor(Math.random() * songs.length);
 
-    function playSong(index) {
-      audio.src = songs[index];
+    function playSong(i) {
+      audio.src = songs[i];
       audio.muted = false;
       audio.play().catch(() => {});
       muteBtn.style.visibility = 'visible';
       muteBtn.textContent = '🔊';
     }
 
-    audio.addEventListener('ended', () => {
+    audio.onended = () => {
       currentSongIndex = Math.floor(Math.random() * songs.length);
       playSong(currentSongIndex);
-    });
+    };
 
-    muteBtn.addEventListener('click', () => {
+    muteBtn.onclick = () => {
       audio.muted = !audio.muted;
       muteBtn.textContent = audio.muted ? '🔈' : '🔊';
-    });
+    };
 
-    overlay.addEventListener('click', () => {
+    overlay.onclick = () => {
       playSong(currentSongIndex);
       overlay.style.display = 'none';
-    });
+    };
 
-    // Emoji setup
     const emojiList = ['🏝️', '🌴', '👧', '🌊'];
-    const emojiCount = 29;
-
-    function createEmoji() {
-      const emoji = document.createElement('div');
-      emoji.classList.add('emoji');
-      emoji.textContent = emojiList[Math.floor(Math.random() * emojiList.length)];
-      emoji.style.left = Math.random() * 100 + 'vw';
-      emoji.style.top = (100 + Math.random() * 10) + 'vh';
-      emoji.style.opacity = 0.8;
-      emoji.style.animation = `floatUp ${10 + Math.random() * 15}s linear infinite`;
-      const drift = (Math.random() - 0.5) * 50;
-      emoji.style.setProperty('--drift', drift + 'vw');
-      emojiContainer.appendChild(emoji);
+    for (let i = 0; i < 29; i++) {
+      const e = document.createElement('div');
+      e.className = 'emoji';
+      e.textContent = emojiList[Math.floor(Math.random() * emojiList.length)];
+      e.style.left = Math.random() * 100 + 'vw';
+      e.style.top = (100 + Math.random() * 10) + 'vh';
+      e.style.animation = `floatUp ${10 + Math.random()*15}s linear infinite`;
+      e.style.setProperty('--drift', (Math.random() - 0.5) * 50 + 'vw');
+      emojiContainer.appendChild(e);
     }
 
-    for (let i = 0; i < emojiCount; i++) {
-      createEmoji();
+    /* Lightning background script */
+    const lightning = document.getElementById("lightning-bg");
+
+    function lightningFlash() {
+      lightning.style.opacity = "1";
+
+      setTimeout(() => { lightning.style.opacity = "0"; }, 120);
+
+      if (Math.random() > 0.5) {
+        setTimeout(() => {
+          lightning.style.opacity = "1";
+          setTimeout(() => { lightning.style.opacity = "0"; }, 80);
+        }, 200);
+      }
+
+      const nextFlashDelay = 3000 + Math.random() * 5000;
+      setTimeout(lightningFlash, nextFlashDelay);
     }
+
+    lightningFlash();
   </script>
-
-  <style>
-    @keyframes floatUp {
-      0% {
-        transform: translateX(0) translateY(0);
-        opacity: 0;
-      }
-      10% {
-        opacity: 0.8;
-      }
-      100% {
-        transform: translateX(var(--drift)) translateY(-120vh);
-        opacity: 0;
-      }
-    }
-  </style>
 
 </body>
 </html>
