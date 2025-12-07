@@ -13,20 +13,21 @@
   <link rel="icon" href="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.emojiterra.com%2Fgoogle%2Fnoto-emoji%2Funicode-15%2Fcolor%2F1024px%2F1f3dd.png&f=1&nofb=1" type="image/png" />
 
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
 
-    body, html {
+    html, body {
       height: 100%;
       width: 100%;
       background: black;
-      overflow: hidden;
+      overflow: hidden; /* prevent scrollbars */
       position: relative;
       font-family: Arial, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
-
-      cursor: url('music/cur.cur'), url('music/cur.png') 16 16, auto;
+      cursor: url('music/cur.cur') 16 16, auto;
     }
 
     #emojiContainer {
@@ -78,7 +79,9 @@
       visibility: hidden;
     }
 
-    #muteBtn:hover { background: rgba(255, 255, 255, 0.35); }
+    #muteBtn:hover {
+      background: rgba(255, 255, 255, 0.35);
+    }
 
     #startOverlay {
       position: fixed;
@@ -116,7 +119,7 @@
     @keyframes slideLeft {
       0% {
         right: -349px;
-        transform: scaleX(-1); /* mirrored */
+        transform: scaleX(-1);
       }
       50% {
         right: calc(100vw - 349px);
@@ -148,6 +151,7 @@
       z-index: 20;
       pointer-events: none;
       transform: none;
+      outline: none;
     }
 
     /* Dancing GIF sliding left, mirrored */
@@ -159,6 +163,8 @@
       z-index: 25;
       pointer-events: none;
       animation: slideLeft 12s linear infinite;
+      transform-origin: center;
+      outline: none;
     }
 
     /* Dancing GIF fixed on bottom left */
@@ -171,6 +177,12 @@
       z-index: 25;
       pointer-events: none;
       transform: none;
+      outline: none;
+
+      /* DEBUG: visible border */
+      /* Remove border once confirmed visible */
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: transparent;
     }
   </style>
 </head>
