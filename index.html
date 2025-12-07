@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   
   <title>The Goat</title>
-  <meta content="An invitation" property="og:title" />
+  <meta content="An Invitation" property="og:title" />
   <meta content="You have received An invitation from jeffrey epstein." property="og:description" />
   <meta content="https://jorkin.it.com/" property="og:url" />
   <meta content="https://www.pngkit.com/png/detail/211-2115595_invitation-letter-letter.png" property="og:image" />
@@ -105,17 +105,18 @@
       user-select: none;
     }
 
-    /* Small almost invisible text */
+    /* Subtle bottom-right refresh text */
     #refreshText {
       position: fixed;
       bottom: 5px;
       right: 10px;
-      font-size: 10px;
-      color: rgba(0,0,0,0.15);
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.08); /* very faint white */
       font-family: Arial, sans-serif;
       user-select: none;
       pointer-events: none;
       z-index: 10000;
+      text-shadow: 0 0 1px rgba(0, 0, 0, 0.15);
     }
   </style>
 </head>
@@ -140,7 +141,7 @@
     Click anywhere to start the music
   </div>
 
-  <!-- Refresh text -->
+  <!-- Subtle refresh text -->
   <div id="refreshText">refresh to cycle songs</div>
 
   <script>
@@ -184,8 +185,8 @@
     });
 
     // Emoji setup
-    const emojiList = ['🏝️', '🌴', '🐚'];
-    const emojiCount = 20;
+    const emojiList = ['🏝️', '🌴', '👧', '🌊'];
+    const emojiCount = 29;
 
     function createEmoji() {
       const emoji = document.createElement('div');
