@@ -122,6 +122,18 @@
       transition: opacity 0.12s ease-out;
       mix-blend-mode: screen;
     }
+
+    /* Bottom GIF styling */
+    #bottomGif {
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 349px;
+      height: auto;
+      z-index: 20;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
@@ -142,6 +154,9 @@
 
   <!-- Lightning background layer -->
   <div id="lightning-bg"></div>
+
+  <!-- Bottom GIF -->
+  <img id="bottomGif" src="music/gif.gif" alt="bottom gif" />
 
   <script>
     const audio = document.getElementById('bgAudio');
