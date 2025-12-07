@@ -44,12 +44,13 @@
 
     .emoji {
       position: absolute;
-      font-size: 24px;
       user-select: none;
-      animation-timing-function: linear;
-      will-change: transform;
+      filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
+      animation-timing-function: ease-in-out;
+      will-change: transform, opacity;
       opacity: 0.8;
-      filter: drop-shadow(0 0 1px rgba(0,0,0,0.7));
+      transform-origin: center center;
+      text-shadow: 0 0 6px rgba(255 255 255 / 0.6);
     }
 
     /* Center video */
@@ -148,57 +149,111 @@
       audio.play(); // just in case
     });
 
+    // Emoji list - multiple related emojis for variety
+    const emojiList = ['🏝️', '🌴', '⛵', '🌅', '🌊'];
+
     // Create floating emojis
-    const emojiCount = 25;
+    const emojiCount = 40;
     const emojis = [];
+
+    function randomBetween(min, max) {
+      return min + Math.random() * (max - min);
+    }
 
     function createEmoji() {
       const emoji = document.createElement('div');
       emoji.classList.add('emoji');
-      emoji.textContent = '🏝️'; // island emoji
+      emoji.textContent = emojiList[Math.floor(Math.random() * emojiList.length)];
 
-      // Random horizontal start position
+      // Random horizontal start position (0% - 100%)
       emoji.style.left = Math.random() * 100 + 'vw';
-      // Start below the viewport (100vh to 110vh)
-      emoji.style.top = (100 + Math.random() * 10) + 'vh';
-      // Random size between 16px and 36px font size
-      emoji.style.fontSize = (16 + Math.random() * 20) + 'px';
-      // Random opacity
-      emoji.style.opacity = 0.5 + Math.random() * 0.5;
+      // Random vertical start position (0% - 110%)
+      emoji.style.top = randomBetween(0, 110) + 'vh';
 
-      // Random animation duration (10 to 25 seconds)
-      const duration = 10 + Math.random() * 15;
-      emoji.style.animation = `floatUp ${duration}s linear infinite`;
+      // Random font size between 16px and 48px
+      emoji.style.fontSize = randomBetween(16, 48) + 'px';
+      // Random opacity 0.4 to 0.9
+      emoji.style.opacity = randomBetween(0.4, 0.9);
 
-      // Random horizontal drifting using CSS variable
-      const drift = (Math.random() - 0.5) * 50; // -25 to +25 vw
-      emoji.style.setProperty('--drift', drift + 'vw');
+      // Animation duration 15 - 40 seconds
+      const duration = randomBetween(15, 40);
+      // Random delay to spread them out
+      const delay = randomBetween(0, 40);
+
+      // Drift in X: -30vw to +30vw
+      const drift = randomBetween(-30, 30);
+
+      // Rotation degrees -20 to 20
+      const rotationStart = randomBetween(-20, 20);
+      const rotationEnd = randomBetween(-20, 20);
+
+      // Define animation style with keyframes for float + rotate + fade
+      emoji.style.animation = `floatUp ${duration}s ease-in-out infinite`;
+      emoji.style.animationDelay = `${delay}s`;
+
+      // Save data for rotation in JS animation
+      emoji.dataset.rotationStart = rotationStart;
+      emoji.dataset.rotationEnd = rotationEnd;
+      emoji.dataset.drift = drift;
+      emoji.dataset.duration = duration;
+      emoji.dataset.delay = delay;
 
       emojiContainer.appendChild(emoji);
       emojis.push(emoji);
     }
 
-    for (let i = 0; i < emojiCount; i++) {
+    for(let i = 0; i < emojiCount; i++) {
       createEmoji();
     }
+
+    // JS to animate rotation and drifting for smoother control
+    let lastTimestamp = null;
+    function animate(timestamp) {
+      if(!lastTimestamp) lastTimestamp = timestamp;
+      const delta = (timestamp - lastTimestamp) / 1000; // seconds
+      lastTimestamp = timestamp;
+
+      emojis.forEach(emoji => {
+        // Calculate elapsed animation time with delay & duration
+        let elapsed = ((timestamp/1000) - (emoji.dataset.delay || 0)) % emoji.dataset.duration;
+        let progress = elapsed / emoji.dataset.duration; // 0 to 1
+
+        // Calculate vertical position (float up)
+        // Starts at top +100vh, moves -120vh upwards
+        const startY = 110;
+        const moveY = -120;
+        const currentY = startY + moveY * progress;
+        emoji.style.top = currentY + 'vh';
+
+        // Calculate horizontal drift with a sine wave for smooth side movement
+        const drift = parseFloat(emoji.dataset.drift);
+        const driftX = drift * Math.sin(progress * 2 * Math.PI);
+        emoji.style.left = `calc(${emoji.style.left} + ${driftX}vw)`;
+
+        // Calculate rotation
+        const rotStart = parseFloat(emoji.dataset.rotationStart);
+        const rotEnd = parseFloat(emoji.dataset.rotationEnd);
+        const rot = rotStart + (rotEnd - rotStart) * progress;
+        emoji.style.transform = `rotate(${rot}deg)`;
+
+        // Fade in/out opacity (ease in-out)
+        if(progress < 0.1) {
+          emoji.style.opacity = (progress / 0.1) * (parseFloat(emoji.style.opacity) || 0.8);
+        } else if (progress > 0.9) {
+          emoji.style.opacity = ((1 - progress) / 0.1) * (parseFloat(emoji.style.opacity) || 0.8);
+        } else {
+          emoji.style.opacity = parseFloat(emoji.style.opacity) || 0.8;
+        }
+      });
+
+      requestAnimationFrame(animate);
+    }
+    requestAnimationFrame(animate);
 
   </script>
 
   <style>
-    /* Float up animation with side drift using CSS variable */
-    @keyframes floatUp {
-      0% {
-        transform: translateX(0) translateY(0);
-        opacity: 0;
-      }
-      10% {
-        opacity: 0.8;
-      }
-      100% {
-        transform: translateX(var(--drift)) translateY(-120vh);
-        opacity: 0;
-      }
-    }
+    /* Removed previous floatUp keyframe to let JS handle animation */
   </style>
 
 </body>
