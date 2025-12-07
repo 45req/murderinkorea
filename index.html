@@ -85,11 +85,11 @@
       background: rgba(255, 255, 255, 0.35);
     }
 
-    /* New Discord button */
+    /* Discord button with icon image */
     #discordBtn {
       position: fixed;
       bottom: 20px;
-      left: 70px; /* Next to muteBtn (20px + 40px width + 10px gap) */
+      left: 70px; /* Next to muteBtn */
       background: rgba(255, 255, 255, 0.15);
       border: none;
       border-radius: 50%;
@@ -99,14 +99,20 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      color: white;
-      font-size: 22px;
       transition: background 0.3s ease;
       z-index: 10;
+      padding: 5px;
     }
 
     #discordBtn:hover {
       background: rgba(255, 255, 255, 0.35);
+    }
+
+    #discordBtn img {
+      width: 28px;
+      height: 28px;
+      user-select: none;
+      pointer-events: none;
     }
 
     #startOverlay {
@@ -189,7 +195,9 @@
   <audio id="bgAudio" loop muted></audio>
 
   <button id="muteBtn" aria-label="Toggle Audio">🔈</button>
-  <button id="discordBtn" aria-label="Discord Profile" title="Discord Profile">💬</button>
+  <button id="discordBtn" aria-label="Discord Profile" title="Discord Profile">
+    <img src="https://freelogopng.com/images/all_img/1691730813discord-icon-png.png" alt="Discord Logo" />
+  </button>
 
   <div id="startOverlay">Click to accept the invitation</div>
 
