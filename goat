@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  
+  <!-- Meta Open Graph tags MUST be inside head -->
+  <title>The Goat</title>
+  <meta content="Jeffrey Edward Epstein" property="og:title" />
+  <meta content="Jeffrey Edward Epstein was an American financier and child sex offender. He began his professional career as a teacher at the Dalton School." property="og:description" />
+  <meta content="https://jorkin.it.com/" property="og:url" />
+  <meta content="https://cdn.discordapp.com/attachments/1397687603536592976/1447028820757713128/iu_.png?ex=6936221b&is=6934d09b&hm=319ec9dd15ca8e5e961977c5db172516eb627cb60cc7249b57562fa533021c85" property="og:image" />
+  <meta content="#43B581" data-react-helmet="true" name="theme-color" />
+  
+  <link rel="icon" href="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.emojiterra.com%2Fgoogle%2Fnoto-emoji%2Funicode-15%2Fcolor%2F1024px%2F1f3dd.png&f=1&nofb=1&ipt=24130184d9a3c1855008376160967a67468addc110f50aab7a511cc334c0035f" type="image/png" />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      height: 100%;
+      width: 100%;
+      background: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Center video */
+    #centerVideo {
+      width: 70vw;
+      max-width: 900px;
+      border-radius: 12px;
+      object-fit: contain;
+      display: block;
+      z-index: 1;
+    }
+
+    /* Mute button */
+    #muteBtn {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 18px;
+      transition: background 0.3s ease;
+      z-index: 10;
+      visibility: hidden; /* hide until audio starts */
+    }
+
+    #muteBtn:hover {
+      background: rgba(255, 255, 255, 0.35);
+    }
+
+    /* Overlay to get user click */
+    #startOverlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.85);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.4rem;
+      text-align: center;
+      cursor: pointer;
+      z-index: 1000;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Video muted autoplay -->
+  <video id="centerVideo" autoplay loop muted playsinline>
+    <source src="music/video.mp4" type="video/mp4" />
+  </video>
+
+  <!-- Audio starts muted -->
+  <audio id="bgAudio" src="music/music.mp3" autoplay loop muted></audio>
+
+  <!-- Mute/unmute button, hidden initially -->
+  <button id="muteBtn" aria-label="Toggle Audio">🔈</button>
+
+  <!-- Overlay asking user to click -->
+  <div id="startOverlay">
+    Click anywhere to start the music
+  </div>
+
+  <script>
+    const audio = document.getElementById('bgAudio');
+    const muteBtn = document.getElementById('muteBtn');
+    const overlay = document.getElementById('startOverlay');
+
+    // Toggle mute button
+    muteBtn.addEventListener('click', () => {
+      audio.muted = !audio.muted;
+      muteBtn.textContent = audio.muted ? '🔈' : '🔊';
+    });
+
+    // On user click on overlay: unmute audio and hide overlay + show mute button
+    overlay.addEventListener('click', () => {
+      audio.muted = false;  // unmute music
+      muteBtn.textContent = '🔊';
+      muteBtn.style.visibility = 'visible';
+      overlay.style.display = 'none';
+      audio.play(); // just in case
+    });
+  </script>
+</body>
+</html>
