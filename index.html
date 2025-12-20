@@ -56,15 +56,14 @@ html, body {
   z-index:5;
 }
 
-/* SIDE FLASH COLUMNS WITH BIG GRID */
+/* FLASH COLUMNS */
 .flashColumn {
   position:fixed;
-  top:50%;
-  transform:translateY(-50%);
+  bottom:0;
   width:300px;
   display:flex;
   flex-direction: column;
-  justify-content: flex-start; /* we'll insert top/bottom manually */
+  align-items:center;
   pointer-events:none;
   z-index:3;
 }
@@ -73,22 +72,30 @@ html, body {
 #flashRight { right:80px; }
 
 .flashImg {
-  width: 150%;             /* 250% bigger */
-  max-height: 150%;
-  object-fit: cover;
-  border-radius: 12px;
-  opacity:0;
-  animation: fadeFlash 2s ease-in-out forwards;
+  width:150%; /* bigger */
+  max-height:150%;
+  border-radius:12px;
   box-shadow:0 0 40px rgba(255,255,255,0.35);
-  transform: rotate(var(--rot,0deg)) translate(var(--x,0px), var(--y,0px));
-  margin: -40px 0;          /* slight overlap for big images */
+  opacity:0;
+  transform: translateY(100%) rotate(var(--rot,0deg)) translate(var(--x,0px),var(--y,0px));
+  animation: flyUp 2s ease-in-out forwards;
+  margin-bottom: -40px;
 }
 
-@keyframes fadeFlash {
-  0% { opacity:0; transform:scale(0.9); }
-  20% { opacity:1; transform:scale(1); }
-  80% { opacity:1; }
-  100% { opacity:0; transform:scale(1.05); }
+@keyframes flyUp {
+  0% {
+    transform: translateY(100%) rotate(var(--rot,0deg)) translate(var(--x,0px),var(--y,0px));
+    opacity:0;
+  }
+  20% { opacity:1; }
+  60% {
+    transform: translateY(-120%) rotate(var(--rot,0deg)) translate(var(--x,0px),var(--y,0px));
+    opacity:1;
+  }
+  100% {
+    transform: translateY(-150%) rotate(var(--rot,0deg)) translate(var(--x,0px),var(--y,0px));
+    opacity:0;
+  }
 }
 
 /* LIGHTNING */
@@ -116,33 +123,18 @@ html, body {
   z-index:10;
 }
 
-#muteBtn {
-  left:20px;
-  visibility:hidden;
-  color:white;
-  font-size:18px;
-}
-
-#discordBtn {
-  left:70px;
-  padding:5px;
-}
-
-#discordBtn img {
-  width:28px;
-  height:28px;
-}
+#muteBtn { left:20px; visibility:hidden; color:white; font-size:18px; }
+#discordBtn { left:70px; padding:5px; }
+#discordBtn img { width:28px; height:28px; }
 
 /* DANCING GIFS */
-#dancingGifLeft,
-#dancingGifRight {
+#dancingGifLeft, #dancingGifRight {
   position:fixed;
   bottom:10px;
   width:349px;
   pointer-events:none;
   z-index:25;
 }
-
 #dancingGifLeft { left:10px; }
 #dancingGifRight { right:10px; transform:scaleX(-1); }
 
@@ -203,7 +195,6 @@ const muteBtn = document.getElementById("muteBtn");
 const overlay = document.getElementById("startOverlay");
 const emojiContainer = document.getElementById("emojiContainer");
 const lightning = document.getElementById("lightning-bg");
-
 const flashLeft = document.getElementById("flashLeft");
 const flashRight = document.getElementById("flashRight");
 
@@ -218,22 +209,12 @@ const songs = [
 
 /* FLASH IMAGES */
 const flashImages = [
-  "music/flash.jpg",
-  "music/flash2.jpg",
-  "music/flash3.jpg",
-  "music/flash4.jpg",
-  "music/flash5.jpg",
-  "music/flash6.jpg",
-  "music/flash7.jpg",
-  "music/flash8.jpg",
-  "music/flash9.jpg",
-  "music/flash10.jpg",
-  "music/flash11.jpg",
-  "music/flash12.jpg",
-  "music/flash13.jpg"
+  "music/flash.jpg","music/flash2.jpg","music/flash3.jpg","music/flash4.jpg",
+  "music/flash5.jpg","music/flash6.jpg","music/flash7.jpg","music/flash8.jpg",
+  "music/flash9.jpg","music/flash10.jpg","music/flash11.jpg","music/flash12.jpg","music/flash13.jpg"
 ];
 
-let flashIndex = 0;
+let lastIndex = -1;
 let sideToggle = false;
 
 /* START */
@@ -260,57 +241,58 @@ document.getElementById("discordBtn").onclick = () => {
 
 /* EMOJIS */
 const emojis = ['🏝️','🌴','🌊'];
-for (let i = 0; i < 30; i++) {
-  const e = document.createElement("div");
-  e.className = "emoji";
-  e.textContent = emojis[Math.floor(Math.random()*emojis.length)];
-  e.style.left = Math.random()*100 + "vw";
-  e.style.top = "110vh";
-  e.style.animationDuration = 10 + Math.random()*15 + "s";
+for (let i=0;i<30;i++){
+  const e=document.createElement("div");
+  e.className="emoji";
+  e.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+  e.style.left=Math.random()*100+"vw";
+  e.style.top="110vh";
+  e.style.animationDuration=10 + Math.random()*15 + "s";
   emojiContainer.appendChild(e);
 }
 
 /* LIGHTNING */
-function lightningFlash() {
-  lightning.style.opacity = "1";
+function lightningFlash(){
+  lightning.style.opacity="1";
   setTimeout(()=>lightning.style.opacity="0",120);
   setTimeout(lightningFlash,3000+Math.random()*5000);
 }
 lightningFlash();
 
-/* FLASH LOOP */
-function showFlash() {
-  const img = document.createElement("img");
-  img.className = "flashImg";
-  img.src = flashImages[flashIndex];
+/* FLASH LOGIC */
+function getRandomFlashIndex(){
+  let index;
+  do{
+    index = Math.floor(Math.random()*flashImages.length);
+  }while(index===lastIndex);
+  lastIndex=index;
+  return index;
+}
 
-  // Slight random rotation & offset
-  img.style.setProperty('--rot', (Math.random()*12-6)+'deg');
-  img.style.setProperty('--x', (Math.random()*10-5)+'px');
-  img.style.setProperty('--y', (Math.random()*10-5)+'px');
+function showFlash(){
+  const img=document.createElement("img");
+  img.className="flashImg";
+  img.src = flashImages[getRandomFlashIndex()];
 
-  // Randomly insert at top or bottom
+  // random rotation & offset
+  img.style.setProperty('--rot',(Math.random()*20-10)+'deg');
+  img.style.setProperty('--x',(Math.random()*30-15)+'px');
+  img.style.setProperty('--y',(Math.random()*20-10)+'px');
+
   const col = sideToggle ? flashLeft : flashRight;
   sideToggle = !sideToggle;
-  if (Math.random() > 0.5) {
-    col.prepend(img); // top
-  } else {
-    col.appendChild(img); // bottom
-  }
 
-  flashIndex++;
-  if (flashIndex >= flashImages.length) flashIndex = 0;
+  // randomly prepend or append for top/bottom effect
+  if(Math.random()>0.5) col.prepend(img); else col.appendChild(img);
 
-  // Remove after animation
-  setTimeout(()=> {
-    if (col.contains(img)) col.removeChild(img);
-  },2200);
+  // remove after animation
+  setTimeout(()=>{ if(col.contains(img)) col.removeChild(img); },2200);
+
+  // repeat randomly
+  setTimeout(showFlash,800 + Math.random()*500);
 }
 
-function flashLoop() {
-  showFlash();
-  setTimeout(flashLoop, 1300);
-}
+function flashLoop(){ showFlash(); }
 </script>
 
 </body>
