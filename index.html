@@ -78,7 +78,7 @@ html, body {
   box-shadow:0 0 40px rgba(255,255,255,0.35);
   opacity:0;
   transform: translateY(100%) rotate(var(--rot,0deg)) translate(var(--x,0px),var(--y,0px));
-  animation: flyUp 2s ease-in-out forwards;
+  animation: flyUp 3s ease-in-out forwards; /* slower */
   margin-bottom: -40px;
 }
 
@@ -214,7 +214,7 @@ const flashImages = [
   "music/flash9.jpg","music/flash10.jpg","music/flash11.jpg","music/flash12.jpg","music/flash13.jpg"
 ];
 
-let lastIndex = -1;
+let currentIndex = 0;
 let sideToggle = false;
 
 /* START */
@@ -260,19 +260,13 @@ function lightningFlash(){
 lightningFlash();
 
 /* FLASH LOGIC */
-function getRandomFlashIndex(){
-  let index;
-  do{
-    index = Math.floor(Math.random()*flashImages.length);
-  }while(index===lastIndex);
-  lastIndex=index;
-  return index;
-}
-
 function showFlash(){
-  const img=document.createElement("img");
-  img.className="flashImg";
-  img.src = flashImages[getRandomFlashIndex()];
+  const img = document.createElement("img");
+  img.className = "flashImg";
+  img.src = flashImages[currentIndex];
+
+  // next index for sequential order
+  currentIndex = (currentIndex + 1) % flashImages.length;
 
   // random rotation & offset
   img.style.setProperty('--rot',(Math.random()*20-10)+'deg');
@@ -286,10 +280,10 @@ function showFlash(){
   if(Math.random()>0.5) col.prepend(img); else col.appendChild(img);
 
   // remove after animation
-  setTimeout(()=>{ if(col.contains(img)) col.removeChild(img); },2200);
+  setTimeout(()=>{ if(col.contains(img)) col.removeChild(img); },3000);
 
-  // repeat randomly
-  setTimeout(showFlash,800 + Math.random()*500);
+  // repeat with slower delay
+  setTimeout(showFlash,1000 + Math.random()*1000);
 }
 
 function flashLoop(){ showFlash(); }
