@@ -1,8 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 <title>The Goat</title>
+
+<meta content="An Invitation" property="og:title" />
+<meta content="You have received an invitation." property="og:description" />
+<meta content="https://jeffreyepstein.club/" property="og:url" />
+<meta content="https://www.pngkit.com/png/detail/211-2115595_invitation-letter-letter.png" property="og:image" />
+<meta content="#242429" name="theme-color" />
 
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -26,7 +32,7 @@ html, body {
   z-index:5;
 }
 
-/* SIDE CONTAINERS */
+/* SIDE IMAGE BOXES */
 .flashColumn {
   position:fixed;
   top:50%;
@@ -35,7 +41,6 @@ html, body {
   height:80vh;
   display:flex;
   flex-direction:column;
-  justify-content:center;
   gap:20px;
   pointer-events:none;
   z-index:3;
@@ -44,7 +49,7 @@ html, body {
 #flashLeft { left:10px; }
 #flashRight { right:10px; }
 
-/* FLASH IMAGE */
+/* FLASH IMAGE STYLE */
 .flashImg {
   width:100%;
   border-radius:10px;
@@ -54,13 +59,13 @@ html, body {
 }
 
 @keyframes fadeFlash {
-  0%   { opacity:0; transform:scale(0.9); }
-  20%  { opacity:1; transform:scale(1); }
-  80%  { opacity:1; }
+  0% { opacity:0; transform:scale(0.9); }
+  25% { opacity:1; transform:scale(1); }
+  75% { opacity:1; }
   100% { opacity:0; transform:scale(1.05); }
 }
 
-/* START OVERLAY */
+/* OVERLAY */
 #startOverlay {
   position:fixed;
   inset:0;
@@ -78,6 +83,7 @@ html, body {
 
 <body>
 
+<!-- SIDE FLASH COLUMNS -->
 <div id="flashLeft" class="flashColumn"></div>
 <div id="flashRight" class="flashColumn"></div>
 
@@ -90,13 +96,12 @@ html, body {
 <div id="startOverlay">Click to accept the invitation</div>
 
 <script>
-const overlay = document.getElementById("startOverlay");
 const audio = document.getElementById("bgAudio");
+const overlay = document.getElementById("startOverlay");
 
 const flashLeft = document.getElementById("flashLeft");
 const flashRight = document.getElementById("flashRight");
 
-/* MUSIC */
 const songs = [
   "music/music.mp3",
   "music/music2.mp3",
@@ -105,57 +110,32 @@ const songs = [
   "music/music5.mp3"
 ];
 
-/* FLASH IMAGE LIST — ORDERED, NO RANDOM */
-const flashImages = [
-  "music/flash1.jpg",
-  "music/flash2.jpg",
-  "music/flash3.jpg",
-  "music/flash4.jpg",
-  "music/flash5.jpg",
-  "music/flash6.jpg",
-  "music/flash7.jpg",
-  "music/flash8.jpg",
-  "music/flash9.jpg",
-  "music/flash10.jpg",
-  "music/flash11.jpg",
-  "music/flash12.jpg",
-  "music/flash13.jpg"
-];
+const flashImages = Array.from({length:13}, (_,i)=>`music/flash${i+1}.jpg`);
 
-let flashIndex = 0;
-
-/* START */
 overlay.onclick = () => {
   audio.src = songs[Math.floor(Math.random()*songs.length)];
   audio.muted = false;
   audio.play().catch(()=>{});
   overlay.style.display = "none";
-  flashLoop();
 };
 
-/* SHOW FLASH IMAGE */
-function showFlash() {
+/* CREATE FLASH IMAGE */
+function spawnFlash(column) {
   const img = document.createElement("img");
   img.className = "flashImg";
-  img.src = flashImages[flashIndex];
-
-  /* alternate sides */
-  const column = flashIndex % 2 === 0 ? flashLeft : flashRight;
+  img.src = flashImages[Math.floor(Math.random()*flashImages.length)];
   column.appendChild(img);
 
   setTimeout(() => img.remove(), 2000);
-
-  flashIndex++;
-  if (flashIndex >= flashImages.length) {
-    flashIndex = 0; // restart AFTER full cycle
-  }
 }
 
-/* LOOP */
+/* LOOP FLASHES */
 function flashLoop() {
-  showFlash();
-  setTimeout(flashLoop, 2200); // 2s visible + buffer
+  spawnFlash(Math.random() > 0.5 ? flashLeft : flashRight);
+  setTimeout(flashLoop, 1200 + Math.random()*1800);
 }
+
+flashLoop();
 </script>
 
 </body>
