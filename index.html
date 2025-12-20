@@ -72,30 +72,31 @@ html, body {
 #flashRight { right:80px; }
 
 .flashImg {
-  width:110%; /* bigger */
+  width:110%;
   max-height:110%;
   border-radius:15px;
   box-shadow:0 0 40px rgba(255,255,255,0.35);
   opacity:0;
   transform: translateY(100%) rotate(var(--rot,0deg)) translate(var(--x,0px),var(--y,0px));
-  animation: flyUp 2s ease-in-out forwards;
+  animation: flyUpDown 3s ease-in-out forwards;
   margin-bottom: -40px;
 }
 
-@keyframes flyUp {
+@keyframes flyUpDown {
   0% {
     transform: translateY(100%) rotate(var(--rot,0deg)) translate(var(--x,0px),var(--y,0px));
     opacity:0;
   }
-  20% { opacity:1; }
-  60% {
+  15% { opacity:1; }
+  50% {
     transform: translateY(-120%) rotate(var(--rot,0deg)) translate(var(--x,0px),var(--y,0px));
     opacity:1;
   }
-  100% {
-    transform: translateY(-150%) rotate(var(--rot,0deg)) translate(var(--x,0px),var(--y,0px));
-    opacity:0;
+  85% {
+    transform: translateY(100%) rotate(var(--rot,0deg)) translate(var(--x,0px),var(--y,0px));
+    opacity:1;
   }
+  100% { opacity:0; }
 }
 
 /* LIGHTNING */
@@ -285,8 +286,8 @@ function showFlash(){
   // randomly prepend or append for top/bottom effect
   if(Math.random()>0.5) col.prepend(img); else col.appendChild(img);
 
-  // remove after animation
-  setTimeout(()=>{ if(col.contains(img)) col.removeChild(img); },2200);
+  // remove after animation ends (optional)
+  setTimeout(()=>{ if(col.contains(img)) col.removeChild(img); },3200);
 
   // repeat randomly
   setTimeout(showFlash,800 + Math.random()*500);
