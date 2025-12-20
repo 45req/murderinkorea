@@ -2,19 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  
   <title>The Goat</title>
+
   <meta content="An Invitation" property="og:title" />
   <meta content="You have received an invitation." property="og:description" />
   <meta content="https://jeffreyepstein.club/" property="og:url" />
   <meta content="https://www.pngkit.com/png/detail/211-2115595_invitation-letter-letter.png" property="og:image" />
   <meta content="#242429" name="theme-color" />
-  
+
   <link rel="icon" href="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.emojiterra.com%2Fgoogle%2Fnoto-emoji%2Funicode-15%2Fcolor%2F1024px%2F1f3dd.png&f=1&nofb=1" type="image/png" />
 
   <style>
     * {
-      margin: 0; padding: 0; box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
     html, body {
@@ -27,29 +29,22 @@
       display: flex;
       justify-content: center;
       align-items: center;
-
-      /* Make sure to have the correct path to cursor.png */
       cursor: url('music/cursor.png') 16 16, auto;
     }
 
     #emojiContainer {
       position: fixed;
-      top: 0; left: 0;
-      width: 100vw;
-      height: 100vh;
+      inset: 0;
       pointer-events: none;
-      overflow: hidden;
       z-index: 0;
     }
 
     .emoji {
       position: absolute;
       font-size: 24px;
-      user-select: none;
+      opacity: 0.8;
       animation-timing-function: linear;
       will-change: transform;
-      opacity: 0.8;
-      filter: drop-shadow(0 0 1px rgba(0,0,0,0.7));
     }
 
     #centerVideo {
@@ -57,15 +52,13 @@
       max-width: 900px;
       border-radius: 12px;
       object-fit: contain;
-      display: block;
       z-index: 1;
     }
 
-    #muteBtn {
+    #muteBtn, #discordBtn {
       position: fixed;
       bottom: 20px;
-      left: 20px;
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255,255,255,0.15);
       border: none;
       border-radius: 50%;
       width: 40px;
@@ -74,53 +67,30 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      z-index: 10;
+    }
+
+    #muteBtn {
+      left: 20px;
+      visibility: hidden;
       color: white;
       font-size: 18px;
-      transition: background 0.3s ease;
-      z-index: 10;
-      visibility: hidden;
     }
 
-    #muteBtn:hover {
-      background: rgba(255, 255, 255, 0.35);
-    }
-
-    /* Discord button with icon image */
     #discordBtn {
-      position: fixed;
-      bottom: 20px;
-      left: 70px; /* Next to muteBtn */
-      background: rgba(255, 255, 255, 0.15);
-      border: none;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: background 0.3s ease;
-      z-index: 10;
+      left: 70px;
       padding: 5px;
-    }
-
-    #discordBtn:hover {
-      background: rgba(255, 255, 255, 0.35);
     }
 
     #discordBtn img {
       width: 28px;
       height: 28px;
-      user-select: none;
-      pointer-events: none;
     }
 
     #startOverlay {
       position: fixed;
-      top: 0; left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,1);
+      inset: 0;
+      background: black;
       color: white;
       display: flex;
       justify-content: center;
@@ -136,16 +106,14 @@
       bottom: 5px;
       right: 10px;
       font-size: 34px;
-      color: rgba(255, 255, 255, 0.08);
-      user-select: none;
-      pointer-events: none;
+      color: rgba(255,255,255,0.08);
       z-index: 10000;
     }
 
     @keyframes floatUp {
-      0% { transform: translateX(0) translateY(0); opacity: 0; }
+      0% { transform: translateY(0); opacity: 0; }
       10% { opacity: 0.8; }
-      100% { transform: translateX(var(--drift)) translateY(-120vh); opacity: 0; }
+      100% { transform: translateY(-120vh); opacity: 0; }
     }
 
     #lightning-bg {
@@ -159,134 +127,149 @@
       mix-blend-mode: screen;
     }
 
-    /* Dancing GIF bottom right mirrored */
-    #dancingGifRight {
-      position: fixed;
-      bottom: 10px;
-      right: 10px;
-      width: 349px;
-      height: auto;
-      z-index: 25;
-      pointer-events: none;
-      transform: scaleX(-1); /* mirror horizontally */
-    }
-
-    /* Dancing GIF bottom left normal */
+    #dancingGifRight,
     #dancingGifLeft {
       position: fixed;
       bottom: 10px;
-      left: 10px;
       width: 349px;
-      height: auto;
       z-index: 25;
       pointer-events: none;
-      transform: none;
+    }
+
+    #dancingGifRight {
+      right: 10px;
+      transform: scaleX(-1);
+    }
+
+    #dancingGifLeft {
+      left: 10px;
+    }
+
+    /* 🔥 FLASH IMAGE STYLES */
+    #flashContainer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    .flashImage {
+      position: absolute;
+      max-width: 60vw;
+      max-height: 60vh;
+      opacity: 0;
+      animation: flashFade 2s ease-in-out forwards;
+      filter: drop-shadow(0 0 25px rgba(255,255,255,0.35));
+    }
+
+    @keyframes flashFade {
+      0% { opacity: 0; transform: scale(0.9); }
+      20% { opacity: 1; transform: scale(1); }
+      80% { opacity: 1; }
+      100% { opacity: 0; transform: scale(1.05); }
     }
   </style>
 </head>
 <body>
 
   <div id="emojiContainer"></div>
+  <div id="flashContainer"></div>
 
   <video id="centerVideo" autoplay loop muted playsinline>
-    <source src="music/video.mp4" type="video/mp4" />
+    <source src="music/video.mp4" type="video/mp4">
   </video>
 
   <audio id="bgAudio" loop muted></audio>
 
-  <button id="muteBtn" aria-label="Toggle Audio">🔈</button>
-  <button id="discordBtn" aria-label="Discord Profile" title="Discord Profile">
-    <img src="https://freelogopng.com/images/all_img/1691730813discord-icon-png.png" alt="Discord Logo" />
+  <button id="muteBtn">🔈</button>
+
+  <button id="discordBtn">
+    <img src="https://freelogopng.com/images/all_img/1691730813discord-icon-png.png">
   </button>
 
   <div id="startOverlay">Click to accept the invitation</div>
-
   <div id="refreshText">refresh to cycle songs</div>
-
   <div id="lightning-bg"></div>
 
-  <!-- Dancing GIF bottom right mirrored -->
-  <img id="dancingGifRight" src="music/gif.gif" alt="dancing gif right" />
-
-  <!-- Dancing GIF bottom left normal -->
-  <img id="dancingGifLeft" src="music/gif.gif" alt="dancing gif left" />
+  <img id="dancingGifRight" src="music/gif.gif">
+  <img id="dancingGifLeft" src="music/gif.gif">
 
   <script>
     const audio = document.getElementById('bgAudio');
     const muteBtn = document.getElementById('muteBtn');
-    const discordBtn = document.getElementById('discordBtn');
     const overlay = document.getElementById('startOverlay');
     const emojiContainer = document.getElementById('emojiContainer');
+    const flashContainer = document.getElementById('flashContainer');
+    const lightning = document.getElementById('lightning-bg');
 
     const songs = [
       'music/music.mp3',
       'music/music2.mp3',
       'music/music3.mp3',
       'music/music4.mp3',
-      'music/music5.mp3',
+      'music/music5.mp3'
     ];
 
-    let currentSongIndex = Math.floor(Math.random() * songs.length);
+    const flashImages = Array.from({ length: 13 }, (_, i) => `music/flash${i + 1}.jpg`);
 
-    function playSong(i) {
-      audio.src = songs[i];
+    function playSong() {
+      audio.src = songs[Math.floor(Math.random() * songs.length)];
       audio.muted = false;
       audio.play().catch(() => {});
       muteBtn.style.visibility = 'visible';
       muteBtn.textContent = '🔊';
     }
 
-    audio.onended = () => {
-      currentSongIndex = Math.floor(Math.random() * songs.length);
-      playSong(currentSongIndex);
-    };
-
     muteBtn.onclick = () => {
       audio.muted = !audio.muted;
       muteBtn.textContent = audio.muted ? '🔈' : '🔊';
     };
 
-    discordBtn.onclick = () => {
-      window.open('https://discord.com/users/983949671602995230', '_blank');
-    };
-
     overlay.onclick = () => {
-      playSong(currentSongIndex);
+      playSong();
       overlay.style.display = 'none';
     };
 
-    const emojiList = ['🏝️', '🌴', '👧', '🌊'];
-    for (let i = 0; i < 29; i++) {
+    /* Emojis */
+    const emojis = ['🏝️','🌴','🌊'];
+    for (let i = 0; i < 30; i++) {
       const e = document.createElement('div');
       e.className = 'emoji';
-      e.textContent = emojiList[Math.floor(Math.random() * emojiList.length)];
+      e.textContent = emojis[Math.floor(Math.random() * emojis.length)];
       e.style.left = Math.random() * 100 + 'vw';
-      e.style.top = (100 + Math.random() * 10) + 'vh';
+      e.style.top = '110vh';
       e.style.animation = `floatUp ${10 + Math.random()*15}s linear infinite`;
-      e.style.setProperty('--drift', (Math.random() - 0.5) * 50 + 'vw');
       emojiContainer.appendChild(e);
     }
 
-    /* Lightning background script */
-    const lightning = document.getElementById("lightning-bg");
-
+    /* Lightning */
     function lightningFlash() {
       lightning.style.opacity = "1";
+      setTimeout(() => lightning.style.opacity = "0", 120);
+      setTimeout(lightningFlash, 3000 + Math.random() * 5000);
+    }
+    lightningFlash();
 
-      setTimeout(() => { lightning.style.opacity = "0"; }, 120);
+    /* 🔥 FLASH IMAGE LOGIC */
+    function showFlashImage() {
+      const img = document.createElement('img');
+      img.className = 'flashImage';
+      img.src = flashImages[Math.floor(Math.random() * flashImages.length)];
 
-      if (Math.random() > 0.5) {
-        setTimeout(() => {
-          lightning.style.opacity = "1";
-          setTimeout(() => { lightning.style.opacity = "0"; }, 80);
-        }, 200);
-      }
+      img.style.left = Math.random() * 60 + 20 + 'vw';
+      img.style.top = Math.random() * 60 + 20 + 'vh';
 
-      const nextFlashDelay = 3000 + Math.random() * 5000;
-      setTimeout(lightningFlash, nextFlashDelay);
+      flashContainer.appendChild(img);
+
+      setTimeout(() => img.remove(), 2000);
     }
 
-    lightningFlash();
+    function flashLoop() {
+      showFlashImage();
+      setTimeout(flashLoop, 1500 + Math.random() * 2000);
+    }
+
+    flashLoop();
   </script>
 
 </body>
