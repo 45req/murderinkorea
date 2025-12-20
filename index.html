@@ -56,16 +56,15 @@ html, body {
   z-index:5;
 }
 
-/* SIDE FLASH COLUMNS WITH GRID */
+/* SIDE FLASH COLUMNS WITH BIG GRID */
 .flashColumn {
   position:fixed;
   top:50%;
   transform:translateY(-50%);
-  width:260px;
-  display:grid;
-  grid-template-columns: 1fr 1fr; /* 2 images per column */
-  grid-auto-rows: 90px;
-  gap:8px;
+  width:300px;
+  display:flex;
+  flex-direction: column;
+  justify-content: flex-start; /* we'll insert top/bottom manually */
   pointer-events:none;
   z-index:3;
 }
@@ -74,19 +73,20 @@ html, body {
 #flashRight { right:80px; }
 
 .flashImg {
-  width:400%;
-  max-height:400%;
-  object-fit:contain;
-  border-radius:10px;
+  width: 250%;             /* 250% bigger */
+  max-height: 250%;
+  object-fit: cover;
+  border-radius: 12px;
   opacity:0;
-  animation:fadeFlash 2s ease-in-out forwards;
-  box-shadow:0 0 30px rgba(255,255,255,0.35);
+  animation: fadeFlash 2s ease-in-out forwards;
+  box-shadow:0 0 40px rgba(255,255,255,0.35);
   transform: rotate(var(--rot,0deg)) translate(var(--x,0px), var(--y,0px));
+  margin: -40px 0;          /* slight overlap for big images */
 }
 
 @keyframes fadeFlash {
   0% { opacity:0; transform:scale(0.9); }
-  20% { opacity:1; scale(1); }
+  20% { opacity:1; transform:scale(1); }
   80% { opacity:1; }
   100% { opacity:0; transform:scale(1.05); }
 }
@@ -278,26 +278,30 @@ function lightningFlash() {
 }
 lightningFlash();
 
-/* FLASH GRID LOOP */
+/* FLASH LOOP */
 function showFlash() {
   const img = document.createElement("img");
   img.className = "flashImg";
   img.src = flashImages[flashIndex];
 
-  // slight random rotation & offset for “misplaced” look
+  // Slight random rotation & offset
   img.style.setProperty('--rot', (Math.random()*12-6)+'deg');
   img.style.setProperty('--x', (Math.random()*10-5)+'px');
   img.style.setProperty('--y', (Math.random()*10-5)+'px');
 
+  // Randomly insert at top or bottom
   const col = sideToggle ? flashLeft : flashRight;
   sideToggle = !sideToggle;
-
-  col.appendChild(img);
+  if (Math.random() > 0.5) {
+    col.prepend(img); // top
+  } else {
+    col.appendChild(img); // bottom
+  }
 
   flashIndex++;
   if (flashIndex >= flashImages.length) flashIndex = 0;
 
-  // remove old images after animation
+  // Remove after animation
   setTimeout(()=> {
     if (col.contains(img)) col.removeChild(img);
   },2200);
