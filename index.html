@@ -56,22 +56,22 @@ html, body {
   z-index:5;
 }
 
-/* SIDE FLASH COLUMNS */
+/* SIDE FLASH COLUMNS WITH GRID */
 .flashColumn {
   position:fixed;
   top:50%;
   transform:translateY(-50%);
   width:260px;
-  height:80vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
+  display:grid;
+  grid-template-columns: 1fr 1fr; /* 2 images per column */
+  grid-auto-rows: 90px;
+  gap:8px;
   pointer-events:none;
   z-index:3;
 }
 
-#flashLeft { left:10px; }
-#flashRight { right:10px; }
+#flashLeft { left:80px; }
+#flashRight { right:80px; }
 
 .flashImg {
   width:100%;
@@ -81,11 +81,12 @@ html, body {
   opacity:0;
   animation:fadeFlash 2s ease-in-out forwards;
   box-shadow:0 0 30px rgba(255,255,255,0.35);
+  transform: rotate(var(--rot,0deg)) translate(var(--x,0px), var(--y,0px));
 }
 
 @keyframes fadeFlash {
   0% { opacity:0; transform:scale(0.9); }
-  20% { opacity:1; transform:scale(1); }
+  20% { opacity:1; scale(1); }
   80% { opacity:1; }
   100% { opacity:0; transform:scale(1.05); }
 }
@@ -215,7 +216,7 @@ const songs = [
   "music/music5.mp3"
 ];
 
-/* FLASH IMAGES — ORDERED */
+/* FLASH IMAGES */
 const flashImages = [
   "music/flash.jpg",
   "music/flash2.jpg",
@@ -277,25 +278,34 @@ function lightningFlash() {
 }
 lightningFlash();
 
-/* FLASH LOOP */
+/* FLASH GRID LOOP */
 function showFlash() {
   const img = document.createElement("img");
   img.className = "flashImg";
   img.src = flashImages[flashIndex];
 
+  // slight random rotation & offset for “misplaced” look
+  img.style.setProperty('--rot', (Math.random()*12-6)+'deg');
+  img.style.setProperty('--x', (Math.random()*10-5)+'px');
+  img.style.setProperty('--y', (Math.random()*10-5)+'px');
+
   const col = sideToggle ? flashLeft : flashRight;
   sideToggle = !sideToggle;
 
-  col.innerHTML = "";
   col.appendChild(img);
 
   flashIndex++;
   if (flashIndex >= flashImages.length) flashIndex = 0;
+
+  // remove old images after animation
+  setTimeout(()=> {
+    if (col.contains(img)) col.removeChild(img);
+  },2200);
 }
 
 function flashLoop() {
   showFlash();
-  setTimeout(flashLoop, 1500);
+  setTimeout(flashLoop, 1300);
 }
 </script>
 
