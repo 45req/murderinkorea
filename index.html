@@ -1,276 +1,303 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>The Goat</title>
+<meta charset="UTF-8" />
+<title>The Goat</title>
 
-  <meta content="An Invitation" property="og:title" />
-  <meta content="You have received an invitation." property="og:description" />
-  <meta content="https://jeffreyepstein.club/" property="og:url" />
-  <meta content="https://www.pngkit.com/png/detail/211-2115595_invitation-letter-letter.png" property="og:image" />
-  <meta content="#242429" name="theme-color" />
+<meta content="An Invitation" property="og:title" />
+<meta content="You have received an invitation." property="og:description" />
+<meta content="https://jeffreyepstein.club/" property="og:url" />
+<meta content="https://www.pngkit.com/png/detail/211-2115595_invitation-letter-letter.png" property="og:image" />
+<meta content="#242429" name="theme-color" />
 
-  <link rel="icon" href="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.emojiterra.com%2Fgoogle%2Fnoto-emoji%2Funicode-15%2Fcolor%2F1024px%2F1f3dd.png&f=1&nofb=1" type="image/png" />
+<link rel="icon" href="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.emojiterra.com%2Fgoogle%2Fnoto-emoji%2Funicode-15%2Fcolor%2F1024px%2F1f3dd.png&f=1&nofb=1" type="image/png" />
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
 
-    html, body {
-      height: 100%;
-      width: 100%;
-      background: black;
-      overflow: hidden;
-      position: relative;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: url('music/cursor.png') 16 16, auto;
-    }
+html, body {
+  width:100%;
+  height:100%;
+  background:black;
+  overflow:hidden;
+  font-family:Arial, sans-serif;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  cursor: url('music/cursor.png') 16 16, auto;
+}
 
-    #emojiContainer {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-    }
+/* EMOJIS */
+#emojiContainer {
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+}
 
-    .emoji {
-      position: absolute;
-      font-size: 24px;
-      opacity: 0.8;
-      animation-timing-function: linear;
-      will-change: transform;
-    }
+.emoji {
+  position:absolute;
+  font-size:24px;
+  opacity:0.8;
+  animation:floatUp linear infinite;
+}
 
-    #centerVideo {
-      width: 70vw;
-      max-width: 900px;
-      border-radius: 12px;
-      object-fit: contain;
-      z-index: 1;
-    }
+@keyframes floatUp {
+  0% { transform:translateY(0); opacity:0; }
+  10% { opacity:0.8; }
+  100% { transform:translateY(-120vh); opacity:0; }
+}
 
-    #muteBtn, #discordBtn {
-      position: fixed;
-      bottom: 20px;
-      background: rgba(255,255,255,0.15);
-      border: none;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
+/* CENTER VIDEO */
+#centerVideo {
+  width:70vw;
+  max-width:900px;
+  border-radius:12px;
+  z-index:5;
+}
 
-    #muteBtn {
-      left: 20px;
-      visibility: hidden;
-      color: white;
-      font-size: 18px;
-    }
+/* SIDE FLASH COLUMNS */
+.flashColumn {
+  position:fixed;
+  top:50%;
+  transform:translateY(-50%);
+  width:260px;
+  height:80vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  pointer-events:none;
+  z-index:3;
+}
 
-    #discordBtn {
-      left: 70px;
-      padding: 5px;
-    }
+#flashLeft { left:10px; }
+#flashRight { right:10px; }
 
-    #discordBtn img {
-      width: 28px;
-      height: 28px;
-    }
+.flashImg {
+  width:100%;
+  max-height:100%;
+  object-fit:contain;
+  border-radius:10px;
+  opacity:0;
+  animation:fadeFlash 2s ease-in-out forwards;
+  box-shadow:0 0 30px rgba(255,255,255,0.35);
+}
 
-    #startOverlay {
-      position: fixed;
-      inset: 0;
-      background: black;
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 1.4rem;
-      cursor: pointer;
-      z-index: 1000;
-      user-select: none;
-    }
+@keyframes fadeFlash {
+  0% { opacity:0; transform:scale(0.9); }
+  20% { opacity:1; transform:scale(1); }
+  80% { opacity:1; }
+  100% { opacity:0; transform:scale(1.05); }
+}
 
-    #refreshText {
-      position: fixed;
-      bottom: 5px;
-      right: 10px;
-      font-size: 34px;
-      color: rgba(255,255,255,0.08);
-      z-index: 10000;
-    }
+/* LIGHTNING */
+#lightning-bg {
+  position:fixed;
+  inset:0;
+  background:white;
+  opacity:0;
+  pointer-events:none;
+  z-index:-1;
+  transition:opacity 0.12s ease-out;
+  mix-blend-mode:screen;
+}
 
-    @keyframes floatUp {
-      0% { transform: translateY(0); opacity: 0; }
-      10% { opacity: 0.8; }
-      100% { transform: translateY(-120vh); opacity: 0; }
-    }
+/* BUTTONS */
+#muteBtn, #discordBtn {
+  position:fixed;
+  bottom:20px;
+  background:rgba(255,255,255,0.15);
+  border:none;
+  border-radius:50%;
+  width:40px;
+  height:40px;
+  cursor:pointer;
+  z-index:10;
+}
 
-    #lightning-bg {
-      position: fixed;
-      inset: 0;
-      background: white;
-      opacity: 0;
-      pointer-events: none;
-      z-index: -1;
-      transition: opacity 0.12s ease-out;
-      mix-blend-mode: screen;
-    }
+#muteBtn {
+  left:20px;
+  visibility:hidden;
+  color:white;
+  font-size:18px;
+}
 
-    #dancingGifRight,
-    #dancingGifLeft {
-      position: fixed;
-      bottom: 10px;
-      width: 349px;
-      z-index: 25;
-      pointer-events: none;
-    }
+#discordBtn {
+  left:70px;
+  padding:5px;
+}
 
-    #dancingGifRight {
-      right: 10px;
-      transform: scaleX(-1);
-    }
+#discordBtn img {
+  width:28px;
+  height:28px;
+}
 
-    #dancingGifLeft {
-      left: 10px;
-    }
+/* DANCING GIFS */
+#dancingGifLeft,
+#dancingGifRight {
+  position:fixed;
+  bottom:10px;
+  width:349px;
+  pointer-events:none;
+  z-index:25;
+}
 
-    /* 🔥 FLASH IMAGE STYLES */
-    #flashContainer {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 50;
-    }
+#dancingGifLeft { left:10px; }
+#dancingGifRight { right:10px; transform:scaleX(-1); }
 
-    .flashImage {
-      position: absolute;
-      max-width: 60vw;
-      max-height: 60vh;
-      opacity: 0;
-      animation: flashFade 2s ease-in-out forwards;
-      filter: drop-shadow(0 0 25px rgba(255,255,255,0.35));
-    }
+/* OVERLAY */
+#startOverlay {
+  position:fixed;
+  inset:0;
+  background:black;
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:1.4rem;
+  cursor:pointer;
+  z-index:1000;
+  user-select:none;
+}
 
-    @keyframes flashFade {
-      0% { opacity: 0; transform: scale(0.9); }
-      20% { opacity: 1; transform: scale(1); }
-      80% { opacity: 1; }
-      100% { opacity: 0; transform: scale(1.05); }
-    }
-  </style>
+#refreshText {
+  position:fixed;
+  bottom:5px;
+  right:10px;
+  font-size:34px;
+  color:rgba(255,255,255,0.08);
+  z-index:10000;
+}
+</style>
 </head>
+
 <body>
 
-  <div id="emojiContainer"></div>
-  <div id="flashContainer"></div>
+<div id="emojiContainer"></div>
 
-  <video id="centerVideo" autoplay loop muted playsinline>
-    <source src="music/video.mp4" type="video/mp4">
-  </video>
+<div id="flashLeft" class="flashColumn"></div>
+<div id="flashRight" class="flashColumn"></div>
 
-  <audio id="bgAudio" loop muted></audio>
+<video id="centerVideo" autoplay loop muted playsinline>
+  <source src="music/video.mp4" type="video/mp4">
+</video>
 
-  <button id="muteBtn">🔈</button>
+<audio id="bgAudio" loop muted></audio>
 
-  <button id="discordBtn">
-    <img src="https://freelogopng.com/images/all_img/1691730813discord-icon-png.png">
-  </button>
+<button id="muteBtn">🔈</button>
+<button id="discordBtn">
+  <img src="https://freelogopng.com/images/all_img/1691730813discord-icon-png.png">
+</button>
 
-  <div id="startOverlay">Click to accept the invitation</div>
-  <div id="refreshText">refresh to cycle songs</div>
-  <div id="lightning-bg"></div>
+<div id="startOverlay">Click to accept the invitation</div>
+<div id="refreshText">refresh to cycle songs</div>
+<div id="lightning-bg"></div>
 
-  <img id="dancingGifRight" src="music/gif.gif">
-  <img id="dancingGifLeft" src="music/gif.gif">
+<img id="dancingGifLeft" src="music/gif.gif">
+<img id="dancingGifRight" src="music/gif.gif">
 
-  <script>
-    const audio = document.getElementById('bgAudio');
-    const muteBtn = document.getElementById('muteBtn');
-    const overlay = document.getElementById('startOverlay');
-    const emojiContainer = document.getElementById('emojiContainer');
-    const flashContainer = document.getElementById('flashContainer');
-    const lightning = document.getElementById('lightning-bg');
+<script>
+const audio = document.getElementById("bgAudio");
+const muteBtn = document.getElementById("muteBtn");
+const overlay = document.getElementById("startOverlay");
+const emojiContainer = document.getElementById("emojiContainer");
+const lightning = document.getElementById("lightning-bg");
 
-    const songs = [
-      'music/music.mp3',
-      'music/music2.mp3',
-      'music/music3.mp3',
-      'music/music4.mp3',
-      'music/music5.mp3'
-    ];
+const flashLeft = document.getElementById("flashLeft");
+const flashRight = document.getElementById("flashRight");
 
-    const flashImages = Array.from({ length: 13 }, (_, i) => `music/flash${i + 1}.jpg`);
+/* MUSIC */
+const songs = [
+  "music/music.mp3",
+  "music/music2.mp3",
+  "music/music3.mp3",
+  "music/music4.mp3",
+  "music/music5.mp3"
+];
 
-    function playSong() {
-      audio.src = songs[Math.floor(Math.random() * songs.length)];
-      audio.muted = false;
-      audio.play().catch(() => {});
-      muteBtn.style.visibility = 'visible';
-      muteBtn.textContent = '🔊';
-    }
+/* FLASH IMAGES — ORDERED */
+const flashImages = [
+  "music/flash1.jpg",
+  "music/flash2.jpg",
+  "music/flash3.jpg",
+  "music/flash4.jpg",
+  "music/flash5.jpg",
+  "music/flash6.jpg",
+  "music/flash7.jpg",
+  "music/flash8.jpg",
+  "music/flash9.jpg",
+  "music/flash10.jpg",
+  "music/flash11.jpg",
+  "music/flash12.jpg",
+  "music/flash13.jpg"
+];
 
-    muteBtn.onclick = () => {
-      audio.muted = !audio.muted;
-      muteBtn.textContent = audio.muted ? '🔈' : '🔊';
-    };
+let flashIndex = 0;
+let sideToggle = false;
 
-    overlay.onclick = () => {
-      playSong();
-      overlay.style.display = 'none';
-    };
+/* START */
+overlay.onclick = () => {
+  audio.src = songs[Math.floor(Math.random()*songs.length)];
+  audio.muted = false;
+  audio.play().catch(()=>{});
+  muteBtn.style.visibility = "visible";
+  muteBtn.textContent = "🔊";
+  overlay.style.display = "none";
+  flashLoop();
+};
 
-    /* Emojis */
-    const emojis = ['🏝️','🌴','🌊'];
-    for (let i = 0; i < 30; i++) {
-      const e = document.createElement('div');
-      e.className = 'emoji';
-      e.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-      e.style.left = Math.random() * 100 + 'vw';
-      e.style.top = '110vh';
-      e.style.animation = `floatUp ${10 + Math.random()*15}s linear infinite`;
-      emojiContainer.appendChild(e);
-    }
+/* MUTE */
+muteBtn.onclick = () => {
+  audio.muted = !audio.muted;
+  muteBtn.textContent = audio.muted ? "🔈" : "🔊";
+};
 
-    /* Lightning */
-    function lightningFlash() {
-      lightning.style.opacity = "1";
-      setTimeout(() => lightning.style.opacity = "0", 120);
-      setTimeout(lightningFlash, 3000 + Math.random() * 5000);
-    }
-    lightningFlash();
+/* DISCORD */
+document.getElementById("discordBtn").onclick = () => {
+  window.open("https://discord.com/users/983949671602995230","_blank");
+};
 
-    /* 🔥 FLASH IMAGE LOGIC */
-    function showFlashImage() {
-      const img = document.createElement('img');
-      img.className = 'flashImage';
-      img.src = flashImages[Math.floor(Math.random() * flashImages.length)];
+/* EMOJIS */
+const emojis = ['🏝️','🌴','🌊'];
+for (let i = 0; i < 30; i++) {
+  const e = document.createElement("div");
+  e.className = "emoji";
+  e.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+  e.style.left = Math.random()*100 + "vw";
+  e.style.top = "110vh";
+  e.style.animationDuration = 10 + Math.random()*15 + "s";
+  emojiContainer.appendChild(e);
+}
 
-      img.style.left = Math.random() * 60 + 20 + 'vw';
-      img.style.top = Math.random() * 60 + 20 + 'vh';
+/* LIGHTNING */
+function lightningFlash() {
+  lightning.style.opacity = "1";
+  setTimeout(()=>lightning.style.opacity="0",120);
+  setTimeout(lightningFlash,3000+Math.random()*5000);
+}
+lightningFlash();
 
-      flashContainer.appendChild(img);
+/* FLASH LOOP */
+function showFlash() {
+  const img = document.createElement("img");
+  img.className = "flashImg";
+  img.src = flashImages[flashIndex];
 
-      setTimeout(() => img.remove(), 2000);
-    }
+  const col = sideToggle ? flashLeft : flashRight;
+  sideToggle = !sideToggle;
 
-    function flashLoop() {
-      showFlashImage();
-      setTimeout(flashLoop, 1500 + Math.random() * 2000);
-    }
+  col.innerHTML = "";
+  col.appendChild(img);
 
-    flashLoop();
-  </script>
+  flashIndex++;
+  if (flashIndex >= flashImages.length) flashIndex = 0;
+}
+
+function flashLoop() {
+  showFlash();
+  setTimeout(flashLoop, 2200);
+}
+</script>
 
 </body>
 </html>
