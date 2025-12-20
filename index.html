@@ -60,8 +60,10 @@ html, body {
 .flashColumn {
   position:fixed;
   bottom:0;
-  width:420px;
-  height:100%;
+  width:400px;
+  display:flex;
+  flex-direction: column;
+  align-items:center;
   pointer-events:none;
   z-index:3;
 }
@@ -70,21 +72,30 @@ html, body {
 #flashRight { right:80px; }
 
 .flashImg {
-  position:absolute;
-  width:110%;
-  max-height:110%;
-  border-radius:15px;
+  width:120%; /* bigger */
+  max-height:120%;
+  border-radius:12px;
   box-shadow:0 0 40px rgba(255,255,255,0.35);
   opacity:0;
-  animation: flyUpDown 4s ease-in-out forwards; /* slower */
+  transform: translateY(100%) rotate(var(--rot,0deg)) translate(var(--x,0px),var(--y,0px));
+  animation: flyUp 2s ease-in-out forwards;
+  margin-bottom: -40px;
 }
 
-@keyframes flyUpDown {
-  0% { top: 100%; opacity: 0; }
-  10% { opacity:1; }
-  50% { top: -60%; opacity:1; } /* lower max height */
-  90% { top: 100%; opacity:1; }
-  100% { top: 100%; opacity:0; }
+@keyframes flyUp {
+  0% {
+    transform: translateY(100%) rotate(var(--rot,0deg)) translate(var(--x,0px),var(--y,0px));
+    opacity:0;
+  }
+  20% { opacity:1; }
+  60% {
+    transform: translateY(-120%) rotate(var(--rot,0deg)) translate(var(--x,0px),var(--y,0px));
+    opacity:1;
+  }
+  100% {
+    transform: translateY(-150%) rotate(var(--rot,0deg)) translate(var(--x,0px),var(--y,0px));
+    opacity:0;
+  }
 }
 
 /* LIGHTNING */
@@ -204,6 +215,7 @@ const flashImages = [
 ];
 
 let lastIndex = -1;
+let sideToggle = false;
 
 /* START */
 overlay.onclick = () => {
@@ -213,7 +225,7 @@ overlay.onclick = () => {
   muteBtn.style.visibility = "visible";
   muteBtn.textContent = "🔊";
   overlay.style.display = "none";
-  startFlashLoop();
+  flashLoop();
 };
 
 /* MUTE */
@@ -250,36 +262,37 @@ lightningFlash();
 /* FLASH LOGIC */
 function getRandomFlashIndex(){
   let index;
-  do {
-    index = Math.floor(Math.random() * flashImages.length);
-  } while(index === lastIndex);
-  lastIndex = index;
+  do{
+    index = Math.floor(Math.random()*flashImages.length);
+  }while(index===lastIndex);
+  lastIndex=index;
   return index;
 }
 
-function spawnFlash(){
-  const img = document.createElement("img");
-  img.className = "flashImg";
+function showFlash(){
+  const img=document.createElement("img");
+  img.className="flashImg";
   img.src = flashImages[getRandomFlashIndex()];
 
-  // random rotation and horizontal offset
-  img.style.transform = `rotate(${Math.random()*20-10}deg)`;
-  img.style.left = `${Math.random() * 60}px`;
+  // random rotation & offset
+  img.style.setProperty('--rot',(Math.random()*20-10)+'deg');
+  img.style.setProperty('--x',(Math.random()*30-15)+'px');
+  img.style.setProperty('--y',(Math.random()*20-10)+'px');
 
-  // pick a column
-  const col = Math.random() > 0.5 ? flashLeft : flashRight;
-  col.appendChild(img);
+  const col = sideToggle ? flashLeft : flashRight;
+  sideToggle = !sideToggle;
 
-  // remove after animation ends
-  img.addEventListener('animationend', () => {
-    if(col.contains(img)) col.removeChild(img);
-  });
+  // randomly prepend or append for top/bottom effect
+  if(Math.random()>0.5) col.prepend(img); else col.appendChild(img);
 
-  // spawn next flash after slightly longer delay
-  setTimeout(spawnFlash, 1000 + Math.random()*800);
+  // remove after animation
+  setTimeout(()=>{ if(col.contains(img)) col.removeChild(img); },2200);
+
+  // repeat randomly
+  setTimeout(showFlash,800 + Math.random()*500);
 }
 
-function startFlashLoop(){ spawnFlash(); }
+function flashLoop(){ showFlash(); }
 </script>
 
 </body>
