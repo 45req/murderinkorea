@@ -61,9 +61,7 @@ html, body {
   position:fixed;
   bottom:0;
   width:300px;
-  display:flex;
-  flex-direction: column;
-  align-items:center;
+  height:100%;
   pointer-events:none;
   z-index:3;
 }
@@ -72,31 +70,21 @@ html, body {
 #flashRight { right:80px; }
 
 .flashImg {
+  position:absolute;
   width:110%;
   max-height:110%;
   border-radius:15px;
   box-shadow:0 0 40px rgba(255,255,255,0.35);
   opacity:0;
-  transform: translateY(100%) rotate(var(--rot,0deg)) translate(var(--x,0px),var(--y,0px));
   animation: flyUpDown 3s ease-in-out forwards;
-  margin-bottom: -40px;
 }
 
 @keyframes flyUpDown {
-  0% {
-    transform: translateY(100%) rotate(var(--rot,0deg)) translate(var(--x,0px),var(--y,0px));
-    opacity:0;
-  }
-  15% { opacity:1; }
-  50% {
-    transform: translateY(-120%) rotate(var(--rot,0deg)) translate(var(--x,0px),var(--y,0px));
-    opacity:1;
-  }
-  85% {
-    transform: translateY(100%) rotate(var(--rot,0deg)) translate(var(--x,0px),var(--y,0px));
-    opacity:1;
-  }
-  100% { opacity:0; }
+  0% { top: 100%; opacity: 0; }
+  10% { opacity:1; }
+  50% { top: -120%; opacity:1; }
+  90% { top: 100%; opacity:1; }
+  100% { top: 100%; opacity:0; }
 }
 
 /* LIGHTNING */
@@ -216,7 +204,6 @@ const flashImages = [
 ];
 
 let lastIndex = -1;
-let sideToggle = false;
 
 /* START */
 overlay.onclick = () => {
@@ -226,7 +213,7 @@ overlay.onclick = () => {
   muteBtn.style.visibility = "visible";
   muteBtn.textContent = "🔊";
   overlay.style.display = "none";
-  flashLoop();
+  startFlashLoop();
 };
 
 /* MUTE */
@@ -263,37 +250,36 @@ lightningFlash();
 /* FLASH LOGIC */
 function getRandomFlashIndex(){
   let index;
-  do{
-    index = Math.floor(Math.random()*flashImages.length);
-  }while(index===lastIndex);
-  lastIndex=index;
+  do {
+    index = Math.floor(Math.random() * flashImages.length);
+  } while(index === lastIndex);
+  lastIndex = index;
   return index;
 }
 
-function showFlash(){
-  const img=document.createElement("img");
-  img.className="flashImg";
+function spawnFlash(){
+  const img = document.createElement("img");
+  img.className = "flashImg";
   img.src = flashImages[getRandomFlashIndex()];
 
-  // random rotation & offset
-  img.style.setProperty('--rot',(Math.random()*20-10)+'deg');
-  img.style.setProperty('--x',(Math.random()*30-15)+'px');
-  img.style.setProperty('--y',(Math.random()*20-10)+'px');
+  // random rotation and horizontal offset
+  img.style.transform = `rotate(${Math.random()*20-10}deg)`;
+  img.style.left = `${Math.random() * 80}px`;
 
-  const col = sideToggle ? flashLeft : flashRight;
-  sideToggle = !sideToggle;
+  // pick a column
+  const col = Math.random() > 0.5 ? flashLeft : flashRight;
+  col.appendChild(img);
 
-  // randomly prepend or append for top/bottom effect
-  if(Math.random()>0.5) col.prepend(img); else col.appendChild(img);
+  // remove after animation ends
+  img.addEventListener('animationend', () => {
+    if(col.contains(img)) col.removeChild(img);
+  });
 
-  // remove after animation ends (optional)
-  setTimeout(()=>{ if(col.contains(img)) col.removeChild(img); },3200);
-
-  // repeat randomly
-  setTimeout(showFlash,800 + Math.random()*500);
+  // spawn next flash after random delay
+  setTimeout(spawnFlash, 500 + Math.random()*800);
 }
 
-function flashLoop(){ showFlash(); }
+function startFlashLoop(){ spawnFlash(); }
 </script>
 
 </body>
