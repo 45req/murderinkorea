@@ -1,276 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>The Goat</title>
+<meta charset="UTF-8" />
+<title>The Goat</title>
 
-  <meta content="An Invitation" property="og:title" />
-  <meta content="You have received an invitation." property="og:description" />
-  <meta content="https://jeffreyepstein.club/" property="og:url" />
-  <meta content="https://www.pngkit.com/png/detail/211-2115595_invitation-letter-letter.png" property="og:image" />
-  <meta content="#242429" name="theme-color" />
+<meta content="An Invitation" property="og:title" />
+<meta content="You have received an invitation." property="og:description" />
+<meta content="https://jeffreyepstein.club/" property="og:url" />
+<meta content="https://www.pngkit.com/png/detail/211-2115595_invitation-letter-letter.png" property="og:image" />
+<meta content="#242429" name="theme-color" />
 
-  <link rel="icon" href="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.emojiterra.com%2Fgoogle%2Fnoto-emoji%2Funicode-15%2Fcolor%2F1024px%2F1f3dd.png&f=1&nofb=1" type="image/png" />
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+html, body {
+  width:100%;
+  height:100%;
+  background:black;
+  overflow:hidden;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-family:Arial, sans-serif;
+}
 
-    html, body {
-      height: 100%;
-      width: 100%;
-      background: black;
-      overflow: hidden;
-      position: relative;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: url('music/cursor.png') 16 16, auto;
-    }
+/* CENTER VIDEO */
+#centerVideo {
+  width:70vw;
+  max-width:900px;
+  border-radius:12px;
+  z-index:5;
+}
 
-    #emojiContainer {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-    }
+/* SIDE IMAGE BOXES */
+.flashColumn {
+  position:fixed;
+  top:50%;
+  transform:translateY(-50%);
+  width:260px;
+  height:80vh;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+  pointer-events:none;
+  z-index:3;
+}
 
-    .emoji {
-      position: absolute;
-      font-size: 24px;
-      opacity: 0.8;
-      animation-timing-function: linear;
-      will-change: transform;
-    }
+#flashLeft { left:10px; }
+#flashRight { right:10px; }
 
-    #centerVideo {
-      width: 70vw;
-      max-width: 900px;
-      border-radius: 12px;
-      object-fit: contain;
-      z-index: 1;
-    }
+/* FLASH IMAGE STYLE */
+.flashImg {
+  width:100%;
+  border-radius:10px;
+  opacity:0;
+  animation:fadeFlash 2s ease-in-out forwards;
+  box-shadow:0 0 30px rgba(255,255,255,0.3);
+}
 
-    #muteBtn, #discordBtn {
-      position: fixed;
-      bottom: 20px;
-      background: rgba(255,255,255,0.15);
-      border: none;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
+@keyframes fadeFlash {
+  0% { opacity:0; transform:scale(0.9); }
+  25% { opacity:1; transform:scale(1); }
+  75% { opacity:1; }
+  100% { opacity:0; transform:scale(1.05); }
+}
 
-    #muteBtn {
-      left: 20px;
-      visibility: hidden;
-      color: white;
-      font-size: 18px;
-    }
-
-    #discordBtn {
-      left: 70px;
-      padding: 5px;
-    }
-
-    #discordBtn img {
-      width: 28px;
-      height: 28px;
-    }
-
-    #startOverlay {
-      position: fixed;
-      inset: 0;
-      background: black;
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 1.4rem;
-      cursor: pointer;
-      z-index: 1000;
-      user-select: none;
-    }
-
-    #refreshText {
-      position: fixed;
-      bottom: 5px;
-      right: 10px;
-      font-size: 34px;
-      color: rgba(255,255,255,0.08);
-      z-index: 10000;
-    }
-
-    @keyframes floatUp {
-      0% { transform: translateY(0); opacity: 0; }
-      10% { opacity: 0.8; }
-      100% { transform: translateY(-120vh); opacity: 0; }
-    }
-
-    #lightning-bg {
-      position: fixed;
-      inset: 0;
-      background: white;
-      opacity: 0;
-      pointer-events: none;
-      z-index: -1;
-      transition: opacity 0.12s ease-out;
-      mix-blend-mode: screen;
-    }
-
-    #dancingGifRight,
-    #dancingGifLeft {
-      position: fixed;
-      bottom: 10px;
-      width: 349px;
-      z-index: 25;
-      pointer-events: none;
-    }
-
-    #dancingGifRight {
-      right: 10px;
-      transform: scaleX(-1);
-    }
-
-    #dancingGifLeft {
-      left: 10px;
-    }
-
-    /* 🔥 FLASH IMAGE STYLES */
-    #flashContainer {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 50;
-    }
-
-    .flashImage {
-      position: absolute;
-      max-width: 60vw;
-      max-height: 60vh;
-      opacity: 0;
-      animation: flashFade 2s ease-in-out forwards;
-      filter: drop-shadow(0 0 25px rgba(255,255,255,0.35));
-    }
-
-    @keyframes flashFade {
-      0% { opacity: 0; transform: scale(0.9); }
-      20% { opacity: 1; transform: scale(1); }
-      80% { opacity: 1; }
-      100% { opacity: 0; transform: scale(1.05); }
-    }
-  </style>
+/* OVERLAY */
+#startOverlay {
+  position:fixed;
+  inset:0;
+  background:black;
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:1.4rem;
+  cursor:pointer;
+  z-index:1000;
+}
+</style>
 </head>
+
 <body>
 
-  <div id="emojiContainer"></div>
-  <div id="flashContainer"></div>
+<!-- SIDE FLASH COLUMNS -->
+<div id="flashLeft" class="flashColumn"></div>
+<div id="flashRight" class="flashColumn"></div>
 
-  <video id="centerVideo" autoplay loop muted playsinline>
-    <source src="music/video.mp4" type="video/mp4">
-  </video>
+<video id="centerVideo" autoplay loop muted playsinline>
+  <source src="music/video.mp4" type="video/mp4">
+</video>
 
-  <audio id="bgAudio" loop muted></audio>
+<audio id="bgAudio" loop muted></audio>
 
-  <button id="muteBtn">🔈</button>
+<div id="startOverlay">Click to accept the invitation</div>
 
-  <button id="discordBtn">
-    <img src="https://freelogopng.com/images/all_img/1691730813discord-icon-png.png">
-  </button>
+<script>
+const audio = document.getElementById("bgAudio");
+const overlay = document.getElementById("startOverlay");
 
-  <div id="startOverlay">Click to accept the invitation</div>
-  <div id="refreshText">refresh to cycle songs</div>
-  <div id="lightning-bg"></div>
+const flashLeft = document.getElementById("flashLeft");
+const flashRight = document.getElementById("flashRight");
 
-  <img id="dancingGifRight" src="music/gif.gif">
-  <img id="dancingGifLeft" src="music/gif.gif">
+const songs = [
+  "music/music.mp3",
+  "music/music2.mp3",
+  "music/music3.mp3",
+  "music/music4.mp3",
+  "music/music5.mp3"
+];
 
-  <script>
-    const audio = document.getElementById('bgAudio');
-    const muteBtn = document.getElementById('muteBtn');
-    const overlay = document.getElementById('startOverlay');
-    const emojiContainer = document.getElementById('emojiContainer');
-    const flashContainer = document.getElementById('flashContainer');
-    const lightning = document.getElementById('lightning-bg');
+const flashImages = Array.from({length:13}, (_,i)=>`music/flash${i+1}.jpg`);
 
-    const songs = [
-      'music/music.mp3',
-      'music/music2.mp3',
-      'music/music3.mp3',
-      'music/music4.mp3',
-      'music/music5.mp3'
-    ];
+overlay.onclick = () => {
+  audio.src = songs[Math.floor(Math.random()*songs.length)];
+  audio.muted = false;
+  audio.play().catch(()=>{});
+  overlay.style.display = "none";
+};
 
-    const flashImages = Array.from({ length: 13 }, (_, i) => `music/flash${i + 1}.jpg`);
+/* CREATE FLASH IMAGE */
+function spawnFlash(column) {
+  const img = document.createElement("img");
+  img.className = "flashImg";
+  img.src = flashImages[Math.floor(Math.random()*flashImages.length)];
+  column.appendChild(img);
 
-    function playSong() {
-      audio.src = songs[Math.floor(Math.random() * songs.length)];
-      audio.muted = false;
-      audio.play().catch(() => {});
-      muteBtn.style.visibility = 'visible';
-      muteBtn.textContent = '🔊';
-    }
+  setTimeout(() => img.remove(), 2000);
+}
 
-    muteBtn.onclick = () => {
-      audio.muted = !audio.muted;
-      muteBtn.textContent = audio.muted ? '🔈' : '🔊';
-    };
+/* LOOP FLASHES */
+function flashLoop() {
+  spawnFlash(Math.random() > 0.5 ? flashLeft : flashRight);
+  setTimeout(flashLoop, 1200 + Math.random()*1800);
+}
 
-    overlay.onclick = () => {
-      playSong();
-      overlay.style.display = 'none';
-    };
-
-    /* Emojis */
-    const emojis = ['🏝️','🌴','🌊'];
-    for (let i = 0; i < 30; i++) {
-      const e = document.createElement('div');
-      e.className = 'emoji';
-      e.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-      e.style.left = Math.random() * 100 + 'vw';
-      e.style.top = '110vh';
-      e.style.animation = `floatUp ${10 + Math.random()*15}s linear infinite`;
-      emojiContainer.appendChild(e);
-    }
-
-    /* Lightning */
-    function lightningFlash() {
-      lightning.style.opacity = "1";
-      setTimeout(() => lightning.style.opacity = "0", 120);
-      setTimeout(lightningFlash, 3000 + Math.random() * 5000);
-    }
-    lightningFlash();
-
-    /* 🔥 FLASH IMAGE LOGIC */
-    function showFlashImage() {
-      const img = document.createElement('img');
-      img.className = 'flashImage';
-      img.src = flashImages[Math.floor(Math.random() * flashImages.length)];
-
-      img.style.left = Math.random() * 60 + 20 + 'vw';
-      img.style.top = Math.random() * 60 + 20 + 'vh';
-
-      flashContainer.appendChild(img);
-
-      setTimeout(() => img.remove(), 2000);
-    }
-
-    function flashLoop() {
-      showFlashImage();
-      setTimeout(flashLoop, 1500 + Math.random() * 2000);
-    }
-
-    flashLoop();
-  </script>
+flashLoop();
+</script>
 
 </body>
 </html>
