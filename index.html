@@ -56,31 +56,7 @@ html, body {
   z-index:5;
 }
 
-/* FLASH COLUMNS */
-.flashColumn {
-  position:fixed;
-  bottom:0;
-  width:300px;
-  display:flex;
-  flex-direction: column;
-  align-items:center;
-  pointer-events:none;
-  z-index:3;
-}
 
-#flashLeft { left:80px; }
-#flashRight { right:80px; }
-
-.flashImg {
-  width:120%; /* bigger */
-  max-height:120%;
-  border-radius:12px;
-  box-shadow:0 0 40px rgba(255,255,255,0.35);
-  opacity:0;
-  transform: translateY(100%) rotate(var(--rot,0deg)) translate(var(--x,0px),var(--y,0px));
-  animation: flyUp 3s ease-in-out forwards; /* slower */
-  margin-bottom: -40px;
-}
 
 @keyframes flyUp {
   0% {
