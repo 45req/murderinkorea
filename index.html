@@ -236,18 +236,6 @@ function lightningFlash(){
 lightningFlash();
 
 /* FLASH LOGIC */
-function showFlash(){
-  const img = document.createElement("img");
-  img.className = "flashImg";
-  img.src = flashImages[currentIndex];
-
-  // next index for sequential order
-  currentIndex = (currentIndex + 1) % flashImages.length;
-
-  // random rotation & offset
-  img.style.setProperty('--rot',(Math.random()*20-10)+'deg');
-  img.style.setProperty('--x',(Math.random()*30-15)+'px');
-  img.style.setProperty('--y',(Math.random()*20-10)+'px');
 
   const col = sideToggle ? flashLeft : flashRight;
   sideToggle = !sideToggle;
