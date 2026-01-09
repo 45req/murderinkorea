@@ -56,24 +56,6 @@ html, body {
   z-index:5;
 }
 
-
-
-@keyframes flyUp {
-  0% {
-    transform: translateY(100%) rotate(var(--rot,0deg)) translate(var(--x,0px),var(--y,0px));
-    opacity:0;
-  }
-  20% { opacity:1; }
-  60% {
-    transform: translateY(-120%) rotate(var(--rot,0deg)) translate(var(--x,0px),var(--y,0px));
-    opacity:1;
-  }
-  100% {
-    transform: translateY(-150%) rotate(var(--rot,0deg)) translate(var(--x,0px),var(--y,0px));
-    opacity:0;
-  }
-}
-
 /* LIGHTNING */
 #lightning-bg {
   position:fixed;
@@ -144,9 +126,6 @@ html, body {
 
 <div id="emojiContainer"></div>
 
-<div id="flashLeft" class="flashColumn"></div>
-<div id="flashRight" class="flashColumn"></div>
-
 <video id="centerVideo" autoplay loop muted playsinline>
   <source src="music/video.mp4" type="video/mp4">
 </video>
@@ -155,15 +134,15 @@ html, body {
 
 <button id="muteBtn">🔈</button>
 <button id="discordBtn">
-  <img src="https://freelogopng.com/images/all_img/1691730813discord-icon-png.png">
+  <img src="https://freelogopng.com/images/all_img/1691730813discord-icon-png.png" alt="Discord">
 </button>
 
 <div id="startOverlay">Click to accept the invitation</div>
 <div id="refreshText">refresh to cycle songs</div>
 <div id="lightning-bg"></div>
 
-<img id="dancingGifLeft" src="music/gif.gif">
-<img id="dancingGifRight" src="music/gif.gif">
+<img id="dancingGifLeft" src="music/gif.gif" alt="Dancing Left">
+<img id="dancingGifRight" src="music/gif.gif" alt="Dancing Right">
 
 <script>
 const audio = document.getElementById("bgAudio");
@@ -171,8 +150,6 @@ const muteBtn = document.getElementById("muteBtn");
 const overlay = document.getElementById("startOverlay");
 const emojiContainer = document.getElementById("emojiContainer");
 const lightning = document.getElementById("lightning-bg");
-const flashLeft = document.getElementById("flashLeft");
-const flashRight = document.getElementById("flashRight");
 
 /* MUSIC */
 const songs = [
@@ -183,16 +160,6 @@ const songs = [
   "music/music5.mp3"
 ];
 
-/* FLASH IMAGES */
-const flashImages = [
-  "music/flash.jpg","music/flash2.jpg","music/flash3.jpg","music/flash4.jpg",
-  "music/flash5.jpg","music/flash6.jpg","music/flash7.jpg","music/flash8.jpg",
-  "music/flash9.jpg","music/flash10.jpg","music/flash11.jpg","music/flash12.jpg","music/flash13.jpg"
-];
-
-let currentIndex = 0;
-let sideToggle = false;
-
 /* START */
 overlay.onclick = () => {
   audio.src = songs[Math.floor(Math.random()*songs.length)];
@@ -201,7 +168,6 @@ overlay.onclick = () => {
   muteBtn.style.visibility = "visible";
   muteBtn.textContent = "🔊";
   overlay.style.display = "none";
-  flashLoop();
 };
 
 /* MUTE */
@@ -217,40 +183,23 @@ document.getElementById("discordBtn").onclick = () => {
 
 /* EMOJIS */
 const emojis = ['🏝️','🌴','🌊'];
-for (let i=0;i<30;i++){
-  const e=document.createElement("div");
-  e.className="emoji";
-  e.textContent=emojis[Math.floor(Math.random()*emojis.length)];
-  e.style.left=Math.random()*100+"vw";
-  e.style.top="110vh";
-  e.style.animationDuration=10 + Math.random()*15 + "s";
+for (let i=0; i<30; i++){
+  const e = document.createElement("div");
+  e.className = "emoji";
+  e.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+  e.style.left = Math.random()*100 + "vw";
+  e.style.top = "110vh";
+  e.style.animationDuration = (10 + Math.random()*15) + "s";
   emojiContainer.appendChild(e);
 }
 
 /* LIGHTNING */
 function lightningFlash(){
-  lightning.style.opacity="1";
-  setTimeout(()=>lightning.style.opacity="0",120);
-  setTimeout(lightningFlash,3000+Math.random()*5000);
+  lightning.style.opacity = "1";
+  setTimeout(() => lightning.style.opacity = "0", 120);
+  setTimeout(lightningFlash, 3000 + Math.random()*5000);
 }
 lightningFlash();
-
-/* FLASH LOGIC */
-
-  const col = sideToggle ? flashLeft : flashRight;
-  sideToggle = !sideToggle;
-
-  // randomly prepend or append for top/bottom effect
-  if(Math.random()>0.5) col.prepend(img); else col.appendChild(img);
-
-  // remove after animation
-  setTimeout(()=>{ if(col.contains(img)) col.removeChild(img); },3000);
-
-  // repeat with slower delay
-  setTimeout(showFlash,1000 + Math.random()*1000);
-}
-
-function flashLoop(){ showFlash(); }
 </script>
 
 </body>
